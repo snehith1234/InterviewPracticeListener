@@ -28,14 +28,18 @@ small { color:#64748b; display:block; margin-top:6px; }
 pre { white-space:pre-wrap; background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:12px; max-height:260px; overflow:auto; }
 .detected, .status, .loading { border-radius:12px; padding:12px; margin:12px 0; background:#eff6ff; color:#1e3a8a; border:1px solid #bfdbfe; }
 .loading { background:#fff7ed; color:#9a3412; border-color:#fed7aa; }
-.markdown { border:1px solid #e5e7eb; border-radius:14px; padding:18px; background:#fcfcfd; line-height:1.55; max-height:calc(100vh - 245px); overflow:auto; }
-.markdown h1 { color:#0f172a; font-size:22px; margin-top:8px; }
-.markdown h2 { margin-top:22px; }
-.markdown ul { padding-left:22px; }
+.markdown { border:1px solid #e5e7eb; border-radius:14px; padding:18px; background:#fcfcfd; line-height:1.55; max-height:calc(100vh - 245px); overflow:auto; font-size:14px; }
+.markdown h1 { color:#0f172a; font-size:16px; font-weight:700; margin:18px 0 6px; padding-bottom:4px; border-bottom:1px solid #e5e7eb; }
+.markdown h2 { font-size:15px; font-weight:700; margin:16px 0 6px; }
+.markdown h3 { font-size:14px; font-weight:600; margin:14px 0 4px; }
+.markdown p { margin:4px 0 8px; }
+.markdown ul { padding-left:20px; margin:4px 0 8px; }
+.markdown li { margin:2px 0; }
 @media (max-width: 1150px) { .grid { grid-template-columns:1fr; } header { flex-direction:column; } .headerControls { width:100%; justify-content:flex-start; } }
 
-.quick-answer { background:#ecfdf5; border:2px solid #6ee7b7; border-radius:14px; padding:16px; margin:12px 0; }
-.quick-answer h3 { margin:0 0 8px; color:#065f46; font-size:16px; }
-.quick-answer p { margin:4px 0; line-height:1.5; font-size:15px; }
+.quick-answer { background:#ecfdf5; border:2px solid #6ee7b7; border-radius:14px; padding:14px 16px; margin:12px 0; font-size:14px; }
+.quick-answer h3 { margin:0 0 6px; color:#065f46; font-size:15px; }
+.quick-answer p { margin:2px 0; line-height:1.5; font-size:14px; }
+.quick-answer strong { color:#065f46; }
 .toggle-label { display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#475569; white-space:nowrap; cursor:pointer; }
 .toggle-label input { width:16px; height:16px; cursor:pointer; }

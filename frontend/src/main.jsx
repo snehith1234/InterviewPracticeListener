@@ -250,6 +250,11 @@ function App() {
   async function triggerAutoAnswer() {
     if (isGeneratingRef.current) return;
     isGeneratingRef.current = true;
+    // Stop mic when auto-triggering
+    stopSilenceCheck();
+    stoppedManuallyRef.current = true;
+    if (recognitionRef.current) recognitionRef.current.stop();
+    setListening(false);
     setStatus('Silence detected — generating answer...');
     await twoPhaseAnswer(transcriptRef.current);
     isGeneratingRef.current = false;
