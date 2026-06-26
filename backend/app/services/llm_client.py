@@ -5,6 +5,9 @@ from typing import Any, Generator, Optional
 from openai import OpenAI
 from app.config import DEFAULT_MODEL, SERVER_OPENAI_API_KEY, ALLOW_CLIENT_API_KEY
 
+# Persistent client cache — reuses TCP/TLS connections across requests
+_client_cache: dict[str, OpenAI] = {}
+
 
 def resolve_api_key(client_key: Optional[str]) -> str:
     if client_key and ALLOW_CLIENT_API_KEY:
@@ -17,7 +20,10 @@ def has_api_key(client_key: Optional[str]) -> bool:
 
 
 def _client(api_key: str) -> OpenAI:
-    return OpenAI(api_key=api_key)
+    """Return a cached OpenAI client for this API key to reuse connections."""
+    if api_key not in _client_cache:
+        _client_cache[api_key] = OpenAI(api_key=api_key)
+    return _client_cache[api_key]
 
 
 def _mock_text(prompt: str, kind: str = "answer") -> str:

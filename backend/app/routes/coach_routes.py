@@ -3,7 +3,7 @@ from fastapi import APIRouter, Header, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from app.config import DEFAULT_MODEL
-from app.services.coach_service import build_profile, detect_question, generate_answer, generate_answer_stream, detect_and_answer_stream, evaluate_user_answer
+from app.services.coach_service import build_profile, detect_question, generate_answer, generate_answer_stream, detect_and_answer_stream, quick_short_answer_stream, evaluate_user_answer
 from app.services.llm_client import responses_text
 
 router = APIRouter()
@@ -91,6 +91,18 @@ def quick_answer(req: QuickAnswerRequest, x_openai_api_key: Optional[str] = Head
     if not req.transcript.strip():
         raise HTTPException(status_code=400, detail="Transcript is required.")
     gen = detect_and_answer_stream(req.role, req.job_description, req.resume_text, req.company_context, req.profile, req.transcript, req.mode, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
+    def event_stream():
+        for chunk in gen:
+            yield f"data: {chunk}\n\n"
+        yield "data: [DONE]\n\n"
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
+
+@router.post("/quick-short")
+def quick_short(req: QuickAnswerRequest, x_openai_api_key: Optional[str] = Header(default=None)):
+    """Ultra-fast 2-sentence answer for immediate display while full answer loads."""
+    if not req.transcript.strip():
+        raise HTTPException(status_code=400, detail="Transcript is required.")
+    gen = quick_short_answer_stream(req.role, req.job_description, req.resume_text, req.company_context, req.profile, req.transcript, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
     def event_stream():
         for chunk in gen:
             yield f"data: {chunk}\n\n"

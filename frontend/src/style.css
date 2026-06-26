@@ -33,3 +33,9 @@ pre { white-space:pre-wrap; background:#f8fafc; border:1px solid #e2e8f0; paddin
 .markdown h2 { margin-top:22px; }
 .markdown ul { padding-left:22px; }
 @media (max-width: 1150px) { .grid { grid-template-columns:1fr; } header { flex-direction:column; } .headerControls { width:100%; justify-content:flex-start; } }
+
+.quick-answer { background:#ecfdf5; border:2px solid #6ee7b7; border-radius:14px; padding:16px; margin:12px 0; }
+.quick-answer h3 { margin:0 0 8px; color:#065f46; font-size:16px; }
+.quick-answer p { margin:4px 0; line-height:1.5; font-size:15px; }
+.toggle-label { display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#475569; white-space:nowrap; cursor:pointer; }
+.toggle-label input { width:16px; height:16px; cursor:pointer; }

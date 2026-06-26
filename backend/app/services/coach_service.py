@@ -286,3 +286,30 @@ Return in this format:
         model=model,
         kind="answer",
     )
+
+
+def quick_short_answer_stream(role: str, job_description: str, resume_text: str, company_context: str, profile: dict, transcript: str, api_key: str | None, model: str | None) -> Generator[str, None, None]:
+    """Ultra-fast first response: detect question + give ONLY a 2-sentence answer. Streams immediately."""
+    if profile and profile.get("candidate_summary"):
+        context_block = f"Profile: {profile.get('candidate_summary', '')}. Skills: {', '.join(profile.get('key_skills', [])[:8])}. Style: {profile.get('answer_style_guidance', '')}."
+    else:
+        context_block = f"Role: {role}. Key JD: {job_description[:2000]}. Resume highlights: {resume_text[:2000]}."
+
+    prompt = f"""
+From this transcript, identify the interview question and give a SHORT 2-3 sentence answer the candidate can say immediately.
+
+Context: {context_block}
+
+Transcript: {transcript[-3000:]}
+
+Reply in EXACTLY this format (nothing else):
+**Q:** [the detected question]
+**Quick Answer:** [2-3 sentence answer they can start speaking right now]
+"""
+    return responses_stream(
+        prompt,
+        system="You give ultra-short interview answers. Be direct, no fluff. 2-3 sentences max.",
+        api_key=api_key,
+        model=model,
+        kind="answer",
+    )

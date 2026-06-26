@@ -1,10 +1,11 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import ReactMarkdown from 'react-markdown';
 import './style.css';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
 const MODEL_OPTIONS = ['gpt-4o-mini', 'gpt-4o', 'gpt-4.1-mini', 'gpt-4.1', 'gpt-5.4-mini', 'gpt-5.4', 'gpt-5.5'];
+const SILENCE_TIMEOUT_MS = 2500; // Auto-trigger after 2.5s of silence
 
 function App() {
   const [apiKey, setApiKey] = useState('');
@@ -18,6 +19,7 @@ function App() {
   const [manualQuestion, setManualQuestion] = useState('');
   const [transcript, setTranscript] = useState('');
   const [detected, setDetected] = useState(null);
+  const [quickAnswer, setQuickAnswer] = useState('');
   const [answer, setAnswer] = useState('');
   const [userAnswer, setUserAnswer] = useState('');
   const [feedback, setFeedback] = useState('');
@@ -25,7 +27,11 @@ function App() {
   const [loading, setLoading] = useState('');
   const [status, setStatus] = useState('');
   const [listening, setListening] = useState(false);
+  const [autoMode, setAutoMode] = useState(true);
   const recognitionRef = useRef(null);
+  const silenceTimerRef = useRef(null);
+  const isGeneratingRef = useRef(false);
+  const transcriptRef = useRef('');
 
   const headers = useMemo(() => {
     const h = { 'Content-Type': 'application/json' };
@@ -164,54 +170,94 @@ function App() {
         if (event.results[i].isFinal) finalText += text + ' ';
         else interimText += text;
       }
-      if (finalText) setTranscript(prev => `${prev} ${finalText}`.trim());
-      setStatus(interimText ? `Listening: ${interimText}` : 'Listening...');
+      if (finalText) {
+        setTranscript(prev => {
+          const updated = `${prev} ${finalText}`.trim();
+          transcriptRef.current = updated;
+          return updated;
+        });
+        // Reset silence timer on new final speech
+        resetSilenceTimer();
+      }
+      setStatus(interimText ? `🎙️ ${interimText}` : '🎙️ Listening...');
+      if (interimText) {
+        // Speech is ongoing — clear silence timer
+        clearSilenceTimer();
+      }
     };
     recog.onerror = (e) => setStatus(`Speech recognition error: ${e.error}`);
-    recog.onend = () => setListening(false);
+    recog.onend = () => {
+      setListening(false);
+      clearSilenceTimer();
+    };
     recog.start();
     setListening(true);
+    setStatus('🎙️ Listening... (auto-generates answer after silence)');
+  }
+
+  function clearSilenceTimer() {
+    if (silenceTimerRef.current) {
+      clearTimeout(silenceTimerRef.current);
+      silenceTimerRef.current = null;
+    }
+  }
+
+  function resetSilenceTimer() {
+    clearSilenceTimer();
+    if (!autoMode) return;
+    silenceTimerRef.current = setTimeout(() => {
+      // Silence detected — auto-trigger answer generation
+      if (transcriptRef.current.trim() && !isGeneratingRef.current) {
+        triggerAutoAnswer();
+      }
+    }, SILENCE_TIMEOUT_MS);
+  }
+
+  async function triggerAutoAnswer() {
+    if (isGeneratingRef.current) return;
+    isGeneratingRef.current = true;
+    setStatus('Silence detected — generating answer...');
+    await twoPhaseAnswer(transcriptRef.current);
+    isGeneratingRef.current = false;
   }
 
   async function stopListening() {
+    clearSilenceTimer();
     if (recognitionRef.current) recognitionRef.current.stop();
     setListening(false);
-    setStatus('Detecting question and generating answer...');
-    await quickAnswerStream();
+    if (!isGeneratingRef.current) {
+      setStatus('Generating answer...');
+      isGeneratingRef.current = true;
+      await twoPhaseAnswer(transcriptRef.current || transcript);
+      isGeneratingRef.current = false;
+    }
   }
 
-  async function quickAnswerStream() {
-    setLoading('Generating answer...');
+  async function twoPhaseAnswer(currentTranscript) {
+    // Phase 1: Ultra-fast short answer (2-3 sentences)
+    // Phase 2: Full detailed answer (streams in parallel after short answer starts)
+    setQuickAnswer('');
     setAnswer('');
     setDetected(null);
+    setLoading('⚡ Quick answer...');
+
+    const body = JSON.stringify({ role, job_description: jobDescription, resume_text: resumeText, company_context: companyContext, profile: profile || {}, transcript: currentTranscript, mode: 'practice', model });
+
+    // Fire both requests simultaneously
+    const shortPromise = streamSSE(`${API_BASE}/coach/quick-short`, body, (text) => setQuickAnswer(text));
+    const fullPromise = streamSSE(`${API_BASE}/coach/quick-answer`, body, (text) => setAnswer(text));
+
     try {
-      const res = await fetch(`${API_BASE}/coach/quick-answer`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ role, job_description: jobDescription, resume_text: resumeText, company_context: companyContext, profile: profile || {}, transcript, mode: 'practice', model })
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.detail || 'Failed');
-      }
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let fullText = '';
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split('\n');
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6);
-            if (data === '[DONE]') break;
-            fullText += data;
-            setAnswer(fullText);
-          }
-        }
-      }
+      await shortPromise;
+      setLoading('Generating detailed answer...');
+    } catch (err) {
+      setStatus(`Error: ${err.message}`);
+    }
+
+    try {
+      const fullText = await fullPromise;
       setStatus('');
+      setLoading('');
       if (fullText) {
         const qMatch = fullText.match(/# Detected Question\s*\n([^\n#]+)/);
         const detectedQ = qMatch ? qMatch[1].trim() : '';
@@ -220,14 +266,46 @@ function App() {
       }
     } catch (err) {
       setStatus(`Error: ${err.message}`);
-    } finally {
       setLoading('');
     }
+  }
+
+  async function streamSSE(url, body, onUpdate) {
+    const res = await fetch(url, { method: 'POST', headers, body });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || 'Request failed');
+    }
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split('\n');
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6);
+          if (data === '[DONE]') return fullText;
+          fullText += data;
+          onUpdate(fullText);
+        }
+      }
+    }
+    return fullText;
+  }
+
+  async function quickAnswerStream() {
+    isGeneratingRef.current = true;
+    await twoPhaseAnswer(transcript);
+    isGeneratingRef.current = false;
   }
 
   async function detectAndGenerate() {
     setLoading('Detecting question...');
     setAnswer('');
+    setQuickAnswer('');
     try {
       const res = await fetch(`${API_BASE}/coach/detect-question`, {
         method: 'POST',
@@ -256,32 +334,8 @@ function App() {
     setLoading('Generating answer...');
     setAnswer('');
     try {
-      const res = await fetch(`${API_BASE}/coach/answer-stream`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ role, job_description: jobDescription, resume_text: resumeText, company_context: companyContext, profile: profile || {}, question, mode: 'practice', model })
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.detail || 'Answer generation failed');
-      }
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let fullText = '';
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split('\n');
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6);
-            if (data === '[DONE]') break;
-            fullText += data;
-            setAnswer(fullText);
-          }
-        }
-      }
+      const body = JSON.stringify({ role, job_description: jobDescription, resume_text: resumeText, company_context: companyContext, profile: profile || {}, question, mode: 'practice', model });
+      const fullText = await streamSSE(`${API_BASE}/coach/answer-stream`, body, (text) => setAnswer(text));
       setStatus('');
       setHistory(prev => [{ question, answer: fullText, createdAt: new Date().toISOString() }, ...prev]);
     } catch (err) {
@@ -335,8 +389,9 @@ function App() {
       <section className="card listener">
         <h2>2. Listen or Enter Question</h2>
         <div className="row">
-          {!listening ? <button onClick={startListening}>Start Mic Listening</button> : <button className="danger" onClick={stopListening}>Stop Listening</button>}
+          {!listening ? <button onClick={startListening}>🎙️ Start Listening</button> : <button className="danger" onClick={stopListening}>⏹ Stop & Generate</button>}
           <button onClick={detectQuestionFromTranscript}>Detect Question</button>
+          <label className="toggle-label"><input type="checkbox" checked={autoMode} onChange={e => setAutoMode(e.target.checked)} /> Auto on silence</label>
         </div>
         <label>Live Transcript / Notes</label>
         <textarea className="big" value={transcript} onChange={e => setTranscript(e.target.value)} placeholder="Transcript will appear here, or paste interviewer question/context here" />
@@ -354,9 +409,10 @@ function App() {
         <h2>3. Suggested Answer / Feedback</h2>
         {loading && <div className="loading">{loading}</div>}
         {status && <div className="status">{status}</div>}
+        {quickAnswer && <div className="quick-answer"><h3>⚡ Say This Now</h3><ReactMarkdown>{quickAnswer}</ReactMarkdown></div>}
         {answer && <div className="markdown"><ReactMarkdown>{answer}</ReactMarkdown></div>}
         {feedback && <><h2>Feedback on Your Answer</h2><div className="markdown"><ReactMarkdown>{feedback}</ReactMarkdown></div></>}
-        <div className="row"><button onClick={downloadHistory} disabled={!history.length}>Download Q&A History</button><button onClick={() => {setAnswer(''); setFeedback('');}}>Clear Output</button></div>
+        <div className="row"><button onClick={downloadHistory} disabled={!history.length}>Download Q&A History</button><button onClick={() => {setAnswer(''); setFeedback(''); setQuickAnswer('');}}>Clear Output</button></div>
       </section>
     </main>
   </div>;
