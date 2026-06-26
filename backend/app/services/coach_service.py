@@ -171,17 +171,18 @@ Rules:
 2. Align to resume and JD.
 3. Do not invent unsupported experience. If something is assumed, phrase it as a reasonable way to answer.
 4. Use practical project language.
-5. Mention tools where relevant.
-6. Include production/project context and business impact.
-7. For senior roles, use Tool + Project + Issue + Action + Result.
+5. Mention specific tools, metric names, commands, or thresholds where relevant — not generic descriptions.
+6. Include production/project context and measurable business impact (time saved, incidents prevented, uptime improved, deployment frequency, etc.).
+7. For senior roles, use Tool + Project + Issue + Action + Result + Impact.
 8. Avoid overly textbook language.
 9. Keep it interview-speak: natural, confident, not too long.
+10. In Real-Time Example, always include: what the situation was, what you specifically did (with tool/command names), and the measurable outcome or impact.
 
 Return in this format:
 # 30-Second Version
 
 # Real-Time Example
-(A concrete example from the candidate's resume/experience that directly relates to the question. If no direct experience, provide a realistic scenario they could reference.)
+(A concrete example from the candidate's resume/experience. MUST include: specific tools/commands used, the action taken, and the measurable impact — e.g. "reduced deployment time from 45min to 8min", "cut incident response from 30min to under 5min", "achieved 99.9% uptime". If no direct experience, build a realistic scenario with specifics the candidate could credibly claim.)
 
 # Strong Answer
 
@@ -257,10 +258,11 @@ Rules:
 1. Start by stating the detected question clearly.
 2. Then provide the answer using practical project language aligned to the candidate context.
 3. Do not invent unsupported experience.
-4. Mention tools where relevant.
-5. Include production/project context and business impact.
-6. For senior roles, use Tool + Project + Issue + Action + Result.
+4. Mention specific tools, metric names, commands, or thresholds — not generic descriptions.
+5. Include production/project context and measurable business impact (time saved, incidents prevented, uptime improved, deployment frequency, etc.).
+6. For senior roles, use Tool + Project + Issue + Action + Result + Impact.
 7. Keep it interview-speak: natural, confident, not too long.
+8. In Real-Time Example, always include: specific tools/commands used, the action taken, and the measurable outcome.
 
 Return in this format:
 # Detected Question
@@ -269,7 +271,7 @@ Return in this format:
 # 30-Second Version
 
 # Real-Time Example
-(A concrete example from the candidate's context that directly relates to the question.)
+(A concrete example from the candidate's context. MUST include: specific tools/commands, the action taken, and measurable impact — e.g. "reduced downtime by 70%", "cut deployment time from 45min to 8min". Make it credible and specific.)
 
 # Strong Answer
 
