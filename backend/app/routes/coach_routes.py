@@ -1,4 +1,5 @@
 from typing import Optional
+import json
 from fastapi import APIRouter, Header, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -81,7 +82,7 @@ def answer_stream(req: AnswerRequest, x_openai_api_key: Optional[str] = Header(d
     gen = generate_answer_stream(req.role, req.job_description, req.resume_text, req.company_context, req.profile, req.question, req.mode, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
     def event_stream():
         for chunk in gen:
-            yield f"data: {chunk}\n\n"
+            yield f"data: {json.dumps(chunk)}\n\n"
         yield "data: [DONE]\n\n"
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
@@ -93,7 +94,7 @@ def quick_answer(req: QuickAnswerRequest, x_openai_api_key: Optional[str] = Head
     gen = detect_and_answer_stream(req.role, req.job_description, req.resume_text, req.company_context, req.profile, req.transcript, req.mode, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
     def event_stream():
         for chunk in gen:
-            yield f"data: {chunk}\n\n"
+            yield f"data: {json.dumps(chunk)}\n\n"
         yield "data: [DONE]\n\n"
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
@@ -105,7 +106,7 @@ def quick_short(req: QuickAnswerRequest, x_openai_api_key: Optional[str] = Heade
     gen = quick_short_answer_stream(req.role, req.job_description, req.resume_text, req.company_context, req.profile, req.transcript, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
     def event_stream():
         for chunk in gen:
-            yield f"data: {chunk}\n\n"
+            yield f"data: {json.dumps(chunk)}\n\n"
         yield "data: [DONE]\n\n"
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
