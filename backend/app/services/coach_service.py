@@ -103,9 +103,12 @@ Rules:
 9. Keep it interview-speak: natural, confident, not too long.
 
 Return in this format:
-# Strong Answer
-
 # 30-Second Version
+
+# Real-Time Example
+(A concrete example from the candidate's resume/experience that directly relates to the question. If no direct experience, provide a realistic scenario they could reference.)
+
+# Strong Answer
 
 # Key Points to Mention
 

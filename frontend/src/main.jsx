@@ -190,10 +190,49 @@ function App() {
     setListening(true);
   }
 
-  function stopListening() {
+  async function stopListening() {
     if (recognitionRef.current) recognitionRef.current.stop();
     setListening(false);
-    setStatus('Stopped listening. Click Detect Question next.');
+    setStatus('Stopped listening. Detecting question and generating answer...');
+    await detectAndGenerate();
+  }
+
+  async function detectAndGenerate() {
+    setLoading('Detecting question...');
+    setAnswer('');
+    try {
+      const res = await fetch(`${API_BASE}/coach/detect-question`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ transcript, model })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Detection failed');
+      setDetected(data);
+      if (data.clean_question) setManualQuestion(data.clean_question);
+      if (!data.is_interview_question || !data.clean_question) {
+        setStatus('No clear interview question detected.');
+        setLoading('');
+        return;
+      }
+      setStatus('✅ Question detected. Generating answer...');
+      setLoading('Generating answer...');
+      const question = data.clean_question;
+      const ansRes = await fetch(`${API_BASE}/coach/answer`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ role, job_description: jobDescription, resume_text: resumeText, company_context: companyContext, profile: profile || {}, question, mode: 'practice', model })
+      });
+      const ansData = await ansRes.json();
+      if (!ansRes.ok) throw new Error(ansData.detail || 'Answer generation failed');
+      setAnswer(ansData.answer);
+      setHistory(prev => [{ question, answer: ansData.answer, createdAt: new Date().toISOString() }, ...prev]);
+      setStatus('');
+    } catch (err) {
+      setStatus(`Error: ${err.message}`);
+    } finally {
+      setLoading('');
+    }
   }
 
   function downloadHistory() {
