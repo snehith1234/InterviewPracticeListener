@@ -29,7 +29,6 @@ function App() {
   const [listening, setListening] = useState(false);
   const [autoMode, setAutoMode] = useState(true);
   const recognitionRef = useRef(null);
-  const silenceTimerRef = useRef(null);
   const isGeneratingRef = useRef(false);
   const transcriptRef = useRef('');
 
@@ -176,41 +175,58 @@ function App() {
           transcriptRef.current = updated;
           return updated;
         });
-        // Reset silence timer on new final speech
-        resetSilenceTimer();
+        // Mark last speech time and start/reset silence timer
+        lastSpeechRef.current = Date.now();
+        startSilenceCheck();
       }
-      setStatus(interimText ? `🎙️ ${interimText}` : '🎙️ Listening...');
       if (interimText) {
-        // Speech is ongoing — clear silence timer
-        clearSilenceTimer();
+        // Interim speech is active, update last speech time
+        lastSpeechRef.current = Date.now();
+        setStatus(`🎙️ ${interimText}`);
+      } else if (!finalText) {
+        setStatus('🎙️ Listening...');
       }
     };
     recog.onerror = (e) => setStatus(`Speech recognition error: ${e.error}`);
     recog.onend = () => {
       setListening(false);
-      clearSilenceTimer();
+      stopSilenceCheck();
     };
     recog.start();
     setListening(true);
+    lastSpeechRef.current = 0;
     setStatus('🎙️ Listening... (auto-generates answer after silence)');
   }
 
-  function clearSilenceTimer() {
-    if (silenceTimerRef.current) {
-      clearTimeout(silenceTimerRef.current);
-      silenceTimerRef.current = null;
+  const lastSpeechRef = useRef(0);
+  const silenceIntervalRef = useRef(null);
+
+  function startSilenceCheck() {
+    if (silenceIntervalRef.current) return; // already polling
+    if (!autoMode) return;
+    silenceIntervalRef.current = setInterval(() => {
+      const elapsed = Date.now() - lastSpeechRef.current;
+      if (elapsed >= SILENCE_TIMEOUT_MS && lastSpeechRef.current > 0 && !isGeneratingRef.current) {
+        stopSilenceCheck();
+        triggerAutoAnswer();
+      }
+    }, 300); // check every 300ms
+  }
+
+  function stopSilenceCheck() {
+    if (silenceIntervalRef.current) {
+      clearInterval(silenceIntervalRef.current);
+      silenceIntervalRef.current = null;
     }
   }
 
+  function clearSilenceTimer() {
+    stopSilenceCheck();
+  }
+
   function resetSilenceTimer() {
-    clearSilenceTimer();
-    if (!autoMode) return;
-    silenceTimerRef.current = setTimeout(() => {
-      // Silence detected — auto-trigger answer generation
-      if (transcriptRef.current.trim() && !isGeneratingRef.current) {
-        triggerAutoAnswer();
-      }
-    }, SILENCE_TIMEOUT_MS);
+    // kept for compatibility but silence check handles it now
+    startSilenceCheck();
   }
 
   async function triggerAutoAnswer() {
@@ -222,10 +238,10 @@ function App() {
   }
 
   async function stopListening() {
-    clearSilenceTimer();
+    stopSilenceCheck();
     if (recognitionRef.current) recognitionRef.current.stop();
     setListening(false);
-    if (!isGeneratingRef.current) {
+    if (!isGeneratingRef.current && transcriptRef.current.trim()) {
       setStatus('Generating answer...');
       isGeneratingRef.current = true;
       await twoPhaseAnswer(transcriptRef.current || transcript);
