@@ -31,6 +31,7 @@ function App() {
   const recognitionRef = useRef(null);
   const isGeneratingRef = useRef(false);
   const transcriptRef = useRef('');
+  const stoppedManuallyRef = useRef(false);
 
   const headers = useMemo(() => {
     const h = { 'Content-Type': 'application/json' };
@@ -187,11 +188,28 @@ function App() {
         setStatus('🎙️ Listening...');
       }
     };
-    recog.onerror = (e) => setStatus(`Speech recognition error: ${e.error}`);
-    recog.onend = () => {
-      setListening(false);
-      stopSilenceCheck();
+    recog.onerror = (e) => {
+      if (e.error !== 'no-speech') {
+        setStatus(`Speech recognition error: ${e.error}`);
+      }
     };
+    recog.onend = () => {
+      // Chrome stops recognition after silence or network timeout.
+      // Auto-restart if user didn't manually stop.
+      if (recognitionRef.current === recog && !stoppedManuallyRef.current) {
+        try {
+          recog.start();
+        } catch (e) {
+          // Already started or disposed
+          setListening(false);
+          stopSilenceCheck();
+        }
+      } else {
+        setListening(false);
+        stopSilenceCheck();
+      }
+    };
+    stoppedManuallyRef.current = false;
     recog.start();
     setListening(true);
     lastSpeechRef.current = 0;
@@ -239,6 +257,7 @@ function App() {
 
   async function stopListening() {
     stopSilenceCheck();
+    stoppedManuallyRef.current = true;
     if (recognitionRef.current) recognitionRef.current.stop();
     setListening(false);
     if (!isGeneratingRef.current && transcriptRef.current.trim()) {
