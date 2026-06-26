@@ -461,6 +461,17 @@ function App() {
         {quickAnswer && <div className="quick-answer"><h3>⚡ Say This Now</h3><ReactMarkdown>{quickAnswer}</ReactMarkdown></div>}
         {answer && <div className="markdown"><ReactMarkdown>{answer}</ReactMarkdown></div>}
         {feedback && <><h2>Feedback on Your Answer</h2><div className="markdown"><ReactMarkdown>{feedback}</ReactMarkdown></div></>}
+
+        {history.length > 1 && <div className="history-section">
+          <h3>Previous Questions</h3>
+          {history.slice(1).map((h, i) => (
+            <details key={i} className="history-item">
+              <summary>{h.question || `Question ${history.length - i - 1}`}</summary>
+              <div className="markdown"><ReactMarkdown>{h.answer}</ReactMarkdown></div>
+            </details>
+          ))}
+        </div>}
+
         <div className="row"><button onClick={downloadHistory} disabled={!history.length}>Download Q&A History</button><button onClick={() => {setAnswer(''); setFeedback(''); setQuickAnswer('');}}>Clear Output</button></div>
       </section>
     </main>

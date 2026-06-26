@@ -45,3 +45,10 @@ pre { white-space:pre-wrap; background:#f8fafc; border:1px solid #e2e8f0; paddin
 .quick-answer strong { color:#065f46; }
 .toggle-label { display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#475569; white-space:nowrap; cursor:pointer; }
 .toggle-label input { width:16px; height:16px; cursor:pointer; }
+
+.history-section { margin-top:20px; border-top:2px solid #e2e8f0; padding-top:16px; }
+.history-section h3 { margin:0 0 10px; font-size:14px; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; }
+.history-item { margin:8px 0; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden; }
+.history-item summary { padding:10px 14px; cursor:pointer; font-weight:600; font-size:13px; color:#334155; background:#f8fafc; }
+.history-item summary:hover { background:#f1f5f9; }
+.history-item .markdown { border:none; border-radius:0; max-height:400px; margin:0; border-top:1px solid #e5e7eb; }
