@@ -1,4 +1,5 @@
-from app.services.llm_client import responses_json, responses_text
+from typing import Generator
+from app.services.llm_client import responses_json, responses_text, responses_stream
 
 
 def build_profile(role: str, job_description: str, resume_text: str, company_context: str, api_key: str | None, model: str | None) -> dict:
@@ -64,60 +65,7 @@ Return JSON:
 
 
 def generate_answer(role: str, job_description: str, resume_text: str, company_context: str, profile: dict, question: str, mode: str, api_key: str | None, model: str | None) -> str:
-    prompt = f"""
-The user is practicing for an interview. Generate a resume/JD-aligned answer for the detected interview question.
-
-IMPORTANT ETHICAL BOUNDARY:
-This is for mock interviews, practice sessions, or situations where AI assistance is allowed. Do not frame this as secret real-interview cheating.
-
-Role/title:
-{role}
-
-Job description:
-{job_description[:12000]}
-
-Company/domain/context:
-{company_context or 'Not provided'}
-
-Candidate profile analysis:
-{profile}
-
-Resume text:
-{resume_text[:18000]}
-
-Interview question:
-{question}
-
-Mode:
-{mode}
-
-Rules:
-1. Start with a direct answer.
-2. Align to resume and JD.
-3. Do not invent unsupported experience. If something is assumed, phrase it as a reasonable way to answer.
-4. Use practical project language.
-5. Mention tools where relevant.
-6. Include production/project context and business impact.
-7. For senior roles, use Tool + Project + Issue + Action + Result.
-8. Avoid overly textbook language.
-9. Keep it interview-speak: natural, confident, not too long.
-
-Return in this format:
-# 30-Second Version
-
-# Real-Time Example
-(A concrete example from the candidate's resume/experience that directly relates to the question. If no direct experience, provide a realistic scenario they could reference.)
-
-# Strong Answer
-
-# Key Points to Mention
-
-# Resume/JD Alignment
-
-# Possible Follow-Up Questions
-
-# Follow-Up Answer Hints
-"""
+    prompt = _build_answer_prompt(role, job_description, resume_text, company_context, profile, question, mode)
     return responses_text(
         prompt,
         system="You are an interview answer coach for practice sessions. Generate strong but truthful candidate answers.",
@@ -163,6 +111,177 @@ Give score out of 10.
     return responses_text(
         prompt,
         system="You are a technical interview coach. Give practical feedback and a better answer.",
+        api_key=api_key,
+        model=model,
+        kind="answer",
+    )
+
+
+def _build_answer_prompt(role: str, job_description: str, resume_text: str, company_context: str, profile: dict, question: str, mode: str) -> str:
+    """Build the answer prompt, trimming context if profile exists."""
+    if profile and profile.get("candidate_summary"):
+        # Profile exists — use compact context instead of full resume+JD
+        context_block = f"""
+Candidate profile analysis:
+{profile}
+
+Role/title:
+{role}
+
+Key JD requirements (summarized from profile):
+{profile.get('role_requirements', job_description[:4000])}
+
+Company/domain/context:
+{company_context or 'Not provided'}
+"""
+    else:
+        # No profile — use full text (first-time flow)
+        context_block = f"""
+Role/title:
+{role}
+
+Job description:
+{job_description[:12000]}
+
+Company/domain/context:
+{company_context or 'Not provided'}
+
+Candidate profile analysis:
+{profile}
+
+Resume text:
+{resume_text[:18000]}
+"""
+    return f"""
+The user is practicing for an interview. Generate a resume/JD-aligned answer for the detected interview question.
+
+IMPORTANT ETHICAL BOUNDARY:
+This is for mock interviews, practice sessions, or situations where AI assistance is allowed. Do not frame this as secret real-interview cheating.
+
+{context_block}
+
+Interview question:
+{question}
+
+Mode:
+{mode}
+
+Rules:
+1. Start with a direct answer.
+2. Align to resume and JD.
+3. Do not invent unsupported experience. If something is assumed, phrase it as a reasonable way to answer.
+4. Use practical project language.
+5. Mention tools where relevant.
+6. Include production/project context and business impact.
+7. For senior roles, use Tool + Project + Issue + Action + Result.
+8. Avoid overly textbook language.
+9. Keep it interview-speak: natural, confident, not too long.
+
+Return in this format:
+# 30-Second Version
+
+# Real-Time Example
+(A concrete example from the candidate's resume/experience that directly relates to the question. If no direct experience, provide a realistic scenario they could reference.)
+
+# Strong Answer
+
+# Key Points to Mention
+
+# Resume/JD Alignment
+
+# Possible Follow-Up Questions
+
+# Follow-Up Answer Hints
+"""
+
+
+def generate_answer_stream(role: str, job_description: str, resume_text: str, company_context: str, profile: dict, question: str, mode: str, api_key: str | None, model: str | None) -> Generator[str, None, None]:
+    """Stream answer tokens for low-latency perceived response."""
+    prompt = _build_answer_prompt(role, job_description, resume_text, company_context, profile, question, mode)
+    return responses_stream(
+        prompt,
+        system="You are an interview answer coach for practice sessions. Generate strong but truthful candidate answers.",
+        api_key=api_key,
+        model=model,
+        kind="answer",
+    )
+
+
+def detect_and_answer_stream(role: str, job_description: str, resume_text: str, company_context: str, profile: dict, transcript: str, mode: str, api_key: str | None, model: str | None) -> Generator[str, None, None]:
+    """Combined: detect question from transcript AND generate answer in one LLM call (streamed)."""
+    if profile and profile.get("candidate_summary"):
+        context_block = f"""
+Candidate profile analysis:
+{profile}
+
+Role/title:
+{role}
+
+Key JD requirements:
+{profile.get('role_requirements', job_description[:4000])}
+
+Company/domain/context:
+{company_context or 'Not provided'}
+"""
+    else:
+        context_block = f"""
+Role/title:
+{role}
+
+Job description:
+{job_description[:12000]}
+
+Company/domain/context:
+{company_context or 'Not provided'}
+
+Resume text:
+{resume_text[:18000]}
+"""
+    prompt = f"""
+The user is in a mock interview practice session. Below is a transcript from the conversation. Your job:
+1. Identify the latest clear interview question from the transcript.
+2. Generate a strong practice answer aligned to the candidate's context.
+
+IMPORTANT ETHICAL BOUNDARY:
+This is for mock interviews, practice sessions, or situations where AI assistance is allowed.
+
+{context_block}
+
+Transcript (latest portion):
+{transcript[-6000:]}
+
+Mode:
+{mode}
+
+Rules:
+1. Start by stating the detected question clearly.
+2. Then provide the answer using practical project language aligned to the candidate context.
+3. Do not invent unsupported experience.
+4. Mention tools where relevant.
+5. Include production/project context and business impact.
+6. For senior roles, use Tool + Project + Issue + Action + Result.
+7. Keep it interview-speak: natural, confident, not too long.
+
+Return in this format:
+# Detected Question
+(The clear interview question you identified)
+
+# 30-Second Version
+
+# Real-Time Example
+(A concrete example from the candidate's context that directly relates to the question.)
+
+# Strong Answer
+
+# Key Points to Mention
+
+# Possible Follow-Up Questions
+
+# Follow-Up Answer Hints
+"""
+    return responses_stream(
+        prompt,
+        system="You are an interview answer coach. First identify the question from the transcript, then generate a strong practice answer.",
         api_key=api_key,
         model=model,
         kind="answer",

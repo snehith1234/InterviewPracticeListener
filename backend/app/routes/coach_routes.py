@@ -1,8 +1,9 @@
 from typing import Optional
 from fastapi import APIRouter, Header, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from app.config import DEFAULT_MODEL
-from app.services.coach_service import build_profile, detect_question, generate_answer, evaluate_user_answer
+from app.services.coach_service import build_profile, detect_question, generate_answer, generate_answer_stream, detect_and_answer_stream, evaluate_user_answer
 from app.services.llm_client import responses_text
 
 router = APIRouter()
@@ -25,6 +26,16 @@ class AnswerRequest(BaseModel):
     company_context: str = ""
     profile: dict = {}
     question: str
+    mode: str = "practice"
+    model: Optional[str] = None
+
+class QuickAnswerRequest(BaseModel):
+    role: str
+    job_description: str
+    resume_text: str
+    company_context: str = ""
+    profile: dict = {}
+    transcript: str
     mode: str = "practice"
     model: Optional[str] = None
 
@@ -61,6 +72,30 @@ def answer(req: AnswerRequest, x_openai_api_key: Optional[str] = Header(default=
         raise HTTPException(status_code=400, detail="Question is required.")
     content = generate_answer(req.role, req.job_description, req.resume_text, req.company_context, req.profile, req.question, req.mode, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
     return {"answer": content}
+
+@router.post("/answer-stream")
+def answer_stream(req: AnswerRequest, x_openai_api_key: Optional[str] = Header(default=None)):
+    """Stream answer tokens via Server-Sent Events for low-latency display."""
+    if not req.question.strip():
+        raise HTTPException(status_code=400, detail="Question is required.")
+    gen = generate_answer_stream(req.role, req.job_description, req.resume_text, req.company_context, req.profile, req.question, req.mode, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
+    def event_stream():
+        for chunk in gen:
+            yield f"data: {chunk}\n\n"
+        yield "data: [DONE]\n\n"
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
+
+@router.post("/quick-answer")
+def quick_answer(req: QuickAnswerRequest, x_openai_api_key: Optional[str] = Header(default=None)):
+    """Combined detect+answer in one streamed call. Skips separate detect round-trip."""
+    if not req.transcript.strip():
+        raise HTTPException(status_code=400, detail="Transcript is required.")
+    gen = detect_and_answer_stream(req.role, req.job_description, req.resume_text, req.company_context, req.profile, req.transcript, req.mode, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
+    def event_stream():
+        for chunk in gen:
+            yield f"data: {chunk}\n\n"
+        yield "data: [DONE]\n\n"
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 @router.post("/evaluate")
 def evaluate(req: EvaluateRequest, x_openai_api_key: Optional[str] = Header(default=None)):

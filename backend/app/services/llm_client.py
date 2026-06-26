@@ -1,7 +1,7 @@
 import json
 import os
 import re
-from typing import Any, Optional
+from typing import Any, Generator, Optional
 from openai import OpenAI
 from app.config import DEFAULT_MODEL, SERVER_OPENAI_API_KEY, ALLOW_CLIENT_API_KEY
 
@@ -39,7 +39,7 @@ def _mock_text(prompt: str, kind: str = "answer") -> str:
             "topic": "recent project",
             "difficulty": "medium"
         })
-    return """Direct answer: I would answer by connecting the question to my real project experience, the tools I used, the issue I handled, the action I took, and the result/business impact.\n\nDetailed answer:\nIn my recent project, I worked on role-relevant responsibilities using the tools listed in my resume and the job description. When facing production or delivery issues, I first clarified the impact, checked logs/metrics/pipeline or system status, isolated the failing component, coordinated with developers/QA/business teams, and applied the safest fix or rollback. After resolution, I documented the root cause and added preventive improvements such as better monitoring, validation, automation, or runbooks.\n\nShort answer to say:\nI usually explain it using Tool + Project + Issue + Action + Result. I focus on what I personally owned, how I troubleshot the issue, and what business impact it had.\n\nKey points to mention:\n- Tools from resume and JD\n- Specific project responsibility\n- Troubleshooting steps\n- Team communication\n- Business impact\n\nPossible follow-ups:\n- What exact tool or command did you use?\n- How did you confirm the issue was resolved?\n- What did you do to prevent recurrence?"""
+    return """# 30-Second Version\nI would answer by connecting the question to my real project experience using Tool + Project + Issue + Action + Result.\n\n# Real-Time Example\nIn my recent project, I handled production issues by checking logs, isolating the component, applying a fix, and documenting root cause.\n\n# Strong Answer\nI focus on what I personally owned, how I troubleshot the issue, and what business impact it had.\n\n# Key Points to Mention\n- Tools from resume and JD\n- Specific project responsibility\n- Troubleshooting steps\n- Team communication\n- Business impact\n\n# Possible Follow-Up Questions\n- What exact tool or command did you use?\n- How did you confirm the issue was resolved?\n- What did you do to prevent recurrence?"""
 
 
 def responses_text(prompt: str, system: str, api_key: Optional[str] = None, model: Optional[str] = None, kind: str = "answer") -> str:
@@ -48,7 +48,6 @@ def responses_text(prompt: str, system: str, api_key: Optional[str] = None, mode
         return _mock_text(prompt, kind)
     selected_model = model or DEFAULT_MODEL
     client = _client(key)
-    # Use Responses API. Keep params conservative for compatibility.
     resp = client.responses.create(
         model=selected_model,
         input=[
@@ -57,6 +56,31 @@ def responses_text(prompt: str, system: str, api_key: Optional[str] = None, mode
         ],
     )
     return resp.output_text
+
+
+def responses_stream(prompt: str, system: str, api_key: Optional[str] = None, model: Optional[str] = None, kind: str = "answer") -> Generator[str, None, None]:
+    """Stream response tokens as a generator. Falls back to mock if no key."""
+    key = resolve_api_key(api_key)
+    if not key:
+        # Yield mock text in chunks to simulate streaming
+        mock = _mock_text(prompt, kind)
+        for i in range(0, len(mock), 20):
+            yield mock[i:i+20]
+        return
+    selected_model = model or DEFAULT_MODEL
+    client = _client(key)
+    stream = client.responses.create(
+        model=selected_model,
+        input=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": prompt},
+        ],
+        stream=True,
+    )
+    for event in stream:
+        if event.type == "response.output_text.delta":
+            yield event.delta
+    stream.close()
 
 
 def responses_json(prompt: str, system: str, api_key: Optional[str] = None, model: Optional[str] = None, kind: str = "profile") -> dict[str, Any]:

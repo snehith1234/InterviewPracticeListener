@@ -118,24 +118,7 @@ function App() {
       setStatus('Enter or detect an interview question first.');
       return;
     }
-    setLoading('Generating answer...');
-    setAnswer('');
-    setStatus('');
-    try {
-      const res = await fetch(`${API_BASE}/coach/answer`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ role, job_description: jobDescription, resume_text: resumeText, company_context: companyContext, profile: profile || {}, question, mode: 'practice', model })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || 'Answer generation failed');
-      setAnswer(data.answer);
-      setHistory(prev => [{ question, answer: data.answer, createdAt: new Date().toISOString() }, ...prev]);
-    } catch (err) {
-      setStatus(`Error: ${err.message}`);
-    } finally {
-      setLoading('');
-    }
+    await streamAnswer(question);
   }
 
   async function evaluateMyAnswer() {
@@ -193,8 +176,53 @@ function App() {
   async function stopListening() {
     if (recognitionRef.current) recognitionRef.current.stop();
     setListening(false);
-    setStatus('Stopped listening. Detecting question and generating answer...');
-    await detectAndGenerate();
+    setStatus('Detecting question and generating answer...');
+    await quickAnswerStream();
+  }
+
+  async function quickAnswerStream() {
+    setLoading('Generating answer...');
+    setAnswer('');
+    setDetected(null);
+    try {
+      const res = await fetch(`${API_BASE}/coach/quick-answer`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ role, job_description: jobDescription, resume_text: resumeText, company_context: companyContext, profile: profile || {}, transcript, mode: 'practice', model })
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || 'Failed');
+      }
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+            if (data === '[DONE]') break;
+            fullText += data;
+            setAnswer(fullText);
+          }
+        }
+      }
+      setStatus('');
+      if (fullText) {
+        const qMatch = fullText.match(/# Detected Question\s*\n([^\n#]+)/);
+        const detectedQ = qMatch ? qMatch[1].trim() : '';
+        if (detectedQ) setManualQuestion(detectedQ);
+        setHistory(prev => [{ question: detectedQ || 'From transcript', answer: fullText, createdAt: new Date().toISOString() }, ...prev]);
+      }
+    } catch (err) {
+      setStatus(`Error: ${err.message}`);
+    } finally {
+      setLoading('');
+    }
   }
 
   async function detectAndGenerate() {
@@ -216,18 +244,46 @@ function App() {
         return;
       }
       setStatus('✅ Question detected. Generating answer...');
-      setLoading('Generating answer...');
-      const question = data.clean_question;
-      const ansRes = await fetch(`${API_BASE}/coach/answer`, {
+      await streamAnswer(data.clean_question);
+    } catch (err) {
+      setStatus(`Error: ${err.message}`);
+    } finally {
+      setLoading('');
+    }
+  }
+
+  async function streamAnswer(question) {
+    setLoading('Generating answer...');
+    setAnswer('');
+    try {
+      const res = await fetch(`${API_BASE}/coach/answer-stream`, {
         method: 'POST',
         headers,
         body: JSON.stringify({ role, job_description: jobDescription, resume_text: resumeText, company_context: companyContext, profile: profile || {}, question, mode: 'practice', model })
       });
-      const ansData = await ansRes.json();
-      if (!ansRes.ok) throw new Error(ansData.detail || 'Answer generation failed');
-      setAnswer(ansData.answer);
-      setHistory(prev => [{ question, answer: ansData.answer, createdAt: new Date().toISOString() }, ...prev]);
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || 'Answer generation failed');
+      }
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+            if (data === '[DONE]') break;
+            fullText += data;
+            setAnswer(fullText);
+          }
+        }
+      }
       setStatus('');
+      setHistory(prev => [{ question, answer: fullText, createdAt: new Date().toISOString() }, ...prev]);
     } catch (err) {
       setStatus(`Error: ${err.message}`);
     } finally {
