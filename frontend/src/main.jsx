@@ -304,6 +304,9 @@ function App() {
         if (detectedQ) setManualQuestion(detectedQ);
         setHistory(prev => [{ question: detectedQ || 'From transcript', answer: fullText, createdAt: new Date().toISOString() }, ...prev]);
       }
+      // Clear transcript for next question
+      setTranscript('');
+      transcriptRef.current = '';
     } catch (err) {
       setStatus(`Error: ${err.message}`);
       setLoading('');
