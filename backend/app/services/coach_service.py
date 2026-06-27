@@ -158,6 +158,22 @@ The user is practicing for an interview. Generate a resume/JD-aligned answer for
 IMPORTANT ETHICAL BOUNDARY:
 This is for mock interviews, practice sessions, or situations where AI assistance is allowed. Do not frame this as secret real-interview cheating.
 
+SPEECH-TO-TEXT NOTE:
+The question may come from voice transcription which often garbles technical terms. Interpret intelligently based on context:
+- "our apps" / "are apps" likely means "rApps" (O-RAN)
+- "ex app" / "X app" likely means "xApp" (O-RAN)
+- "oh ran" / "o ran" means "O-RAN"
+- "jane B" / "gene B" means "gNB"
+- "cube control" / "cube CTL" means "kubectl"
+- "terrace form" / "terraform" means "Terraform"
+- "answer ball" / "answerable" means "Ansible"
+- "doctor" in DevOps context means "Docker"
+- "easy to" / "EC to" means "EC2"
+- "see I see D" / "CICD" means "CI/CD"
+- "AWS three" / "S three" means "S3"
+- "lam da" means "Lambda"
+Use the role, JD, and domain context to infer the correct technical term when transcription is ambiguous.
+
 {context_block}
 
 Interview question:
@@ -253,6 +269,22 @@ The user is in a mock interview practice session. Below is a transcript from the
 IMPORTANT ETHICAL BOUNDARY:
 This is for mock interviews, practice sessions, or situations where AI assistance is allowed.
 
+SPEECH-TO-TEXT NOTE:
+The transcript comes from voice recognition which often garbles technical terms. Interpret intelligently based on context:
+- "our apps" / "are apps" likely means "rApps" (O-RAN)
+- "ex app" / "X app" likely means "xApp" (O-RAN)
+- "oh ran" / "o ran" means "O-RAN"
+- "jane B" / "gene B" means "gNB"
+- "cube control" / "cube CTL" means "kubectl"
+- "terrace form" means "Terraform"
+- "answer ball" / "answerable" means "Ansible"
+- "doctor" in DevOps context means "Docker"
+- "easy to" / "EC to" means "EC2"
+- "see I see D" means "CI/CD"
+- "AWS three" / "S three" means "S3"
+- "lam da" means "Lambda"
+Use the role, JD, and domain context to infer the correct technical term when transcription is ambiguous.
+
 {context_block}
 
 Transcript (latest portion):
@@ -308,12 +340,14 @@ def quick_short_answer_stream(role: str, job_description: str, resume_text: str,
     prompt = f"""
 From this transcript, identify the interview question and give a SHORT 2-3 sentence answer the candidate can say immediately.
 
+Note: Transcript is from voice recognition — interpret garbled terms using domain context (e.g., "our apps" = "rApps", "ex app" = "xApp", "oh ran" = "O-RAN", "terrace form" = "Terraform", "cube control" = "kubectl", "doctor" = "Docker" in DevOps).
+
 Context: {context_block}
 
 Transcript: {transcript[-3000:]}
 
 Reply in EXACTLY this format (nothing else):
-**Q:** [the detected question]
+**Q:** [the detected question — use correct technical terms even if transcript garbled them]
 
 **Quick Answer:**
 
