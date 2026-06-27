@@ -74,3 +74,8 @@ pre { white-space:pre-wrap; background:#f8fafc; border:1px solid #e2e8f0; paddin
 .correction-input .domain-input { max-width:120px; flex:none; }
 .file-btn { display:inline-flex; align-items:center; padding:10px 14px; background:#e5e7eb; border-radius:10px; font-weight:600; font-size:inherit; cursor:pointer; }
 .file-btn:hover { filter:brightness(.97); }
+
+.corr-edit { padding:4px 6px; font-size:12px; border-radius:6px; min-width:0; flex:1; }
+.corr-edit-btn { background:none; border:none; color:#6b7280; font-size:13px; padding:2px 6px; cursor:pointer; min-width:auto; flex:none; }
+.corr-edit-btn:hover { color:#2563eb; }
+.corr-save { background:none; border:none; color:#16a34a; font-size:16px; padding:2px 6px; cursor:pointer; min-width:auto; flex:none; font-weight:bold; }

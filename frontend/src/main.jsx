@@ -35,6 +35,8 @@ function App() {
   const [correctionWrong, setCorrectionWrong] = useState('');
   const [correctionRight, setCorrectionRight] = useState('');
   const [correctionDomain, setCorrectionDomain] = useState('');
+  const [editingCorrectionIdx, setEditingCorrectionIdx] = useState(-1);
+  const [editingCorrection, setEditingCorrection] = useState({ wrong: '', correct: '', domain: '' });
   const recognitionRef = useRef(null);
   const isGeneratingRef = useRef(false);
   const transcriptRef = useRef('');
@@ -490,16 +492,35 @@ function App() {
         <textarea value={resumeText} onChange={e => setResumeText(e.target.value)} placeholder="Or paste resume text here" />
         <button onClick={analyzeProfile}>Analyze Resume + JD</button>
         {profile && <details open><summary>Candidate Profile</summary><pre>{JSON.stringify(profile, null, 2)}</pre></details>}
-        {corrections.length > 0 && <details className="corrections-panel">
+        <details className="corrections-panel">
           <summary>Speech Corrections ({corrections.length})</summary>
           <div className="corrections-list">
-            {corrections.map((c, i) => <div key={i} className="correction-item"><span className="corr-wrong">{c.wrong}</span> → <span className="corr-right">{c.correct}</span> <span className="corr-domain">{c.domain}</span><button className="corr-delete" onClick={() => { const u = corrections.filter((_, j) => j !== i); setCorrections(u); localStorage.setItem('speechCorrections', JSON.stringify(u)); }}>✕</button></div>)}
+            {corrections.map((c, i) => <div key={i} className="correction-item">
+              {editingCorrectionIdx === i ? <>
+                <input className="corr-edit" value={editingCorrection.wrong} onChange={e => setEditingCorrection({...editingCorrection, wrong: e.target.value})} />
+                <span>→</span>
+                <input className="corr-edit" value={editingCorrection.correct} onChange={e => setEditingCorrection({...editingCorrection, correct: e.target.value})} />
+                <input className="corr-edit domain-input" value={editingCorrection.domain} onChange={e => setEditingCorrection({...editingCorrection, domain: e.target.value})} />
+                <button className="corr-save" onClick={() => { const u = [...corrections]; u[i] = editingCorrection; setCorrections(u); localStorage.setItem('speechCorrections', JSON.stringify(u)); setEditingCorrectionIdx(-1); }}>✓</button>
+                <button className="corr-delete" onClick={() => setEditingCorrectionIdx(-1)}>✕</button>
+              </> : <>
+                <span className="corr-wrong">{c.wrong}</span> → <span className="corr-right">{c.correct}</span> <span className="corr-domain">{c.domain}</span>
+                <button className="corr-edit-btn" onClick={() => { setEditingCorrectionIdx(i); setEditingCorrection({...c}); }}>✎</button>
+                <button className="corr-delete" onClick={() => { const u = corrections.filter((_, j) => j !== i); setCorrections(u); localStorage.setItem('speechCorrections', JSON.stringify(u)); }}>✕</button>
+              </>}
+            </div>)}
+          </div>
+          <div className="correction-input">
+            <input placeholder="Heard wrong" value={correctionWrong} onChange={e => setCorrectionWrong(e.target.value)} />
+            <input placeholder="Should be" value={correctionRight} onChange={e => setCorrectionRight(e.target.value)} />
+            <input placeholder="Domain" value={correctionDomain} onChange={e => setCorrectionDomain(e.target.value)} className="domain-input" />
+            <button onClick={saveCorrection}>+ Add</button>
           </div>
           <div className="row">
             <button onClick={exportCorrections}>Export</button>
             <label className="file-btn"><input type="file" accept=".json" onChange={e => importCorrections(e.target.files[0])} hidden />Import</label>
           </div>
-        </details>}
+        </details>
       </section>
 
       <section className="card listener">
