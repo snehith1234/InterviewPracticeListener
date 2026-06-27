@@ -68,7 +68,7 @@ def generate_answer(role: str, job_description: str, resume_text: str, company_c
     prompt = _build_answer_prompt(role, job_description, resume_text, company_context, profile, question, mode)
     return responses_text(
         prompt,
-        system="You are an interview answer coach for practice sessions. Generate strong but truthful candidate answers.",
+        system="You are an expert interview answer coach with deep knowledge across technical domains (DevOps, cloud, AI/ML, data science, software engineering) AND business domains (banking, telecom, healthcare, e-commerce, insurance, manufacturing, etc.). Generate strong, truthful, domain-aware candidate answers for practice sessions.",
         api_key=api_key,
         model=model,
         kind="answer",
@@ -177,12 +177,19 @@ Rules:
 8. Avoid overly textbook language.
 9. Keep it interview-speak: natural, confident, not too long.
 10. In Real-Time Example, always include: what the situation was, what you specifically did (with tool/command names), and the measurable outcome or impact.
+11. DOMAIN EXPERTISE: If the company/role is in a specific domain (banking, telecom, healthcare, e-commerce, insurance, etc.), weave in domain-specific terminology, regulations, workflows, and concerns naturally. For example:
+    - Banking/Finance: mention PCI-DSS, SOX compliance, transaction integrity, core banking systems, payment gateways, fraud detection, regulatory reporting, settlement cycles.
+    - Telecom: mention OSS/BSS, network provisioning, CDRs, SLA management, 5G/LTE, service assurance, mediation, billing systems.
+    - Healthcare: mention HIPAA, HL7/FHIR, EHR/EMR systems, patient data privacy, clinical workflows.
+    - E-commerce: mention cart abandonment, payment processing, catalog services, peak traffic handling, recommendation engines.
+    - Insurance: mention claims processing, underwriting, actuarial systems, policy administration.
+    Show you understand the business context, not just the tech.
 
 Return in this format:
 # 30-Second Version
 
 # Real-Time Example
-(A concrete example from the candidate's resume/experience. MUST include: specific tools/commands used, the action taken, and the measurable impact — e.g. "reduced deployment time from 45min to 8min", "cut incident response from 30min to under 5min", "achieved 99.9% uptime". If no direct experience, build a realistic scenario with specifics the candidate could credibly claim.)
+(A concrete example from the candidate's resume/experience. MUST include: specific tools/commands used, the action taken, and the measurable impact — e.g. "reduced deployment time from 45min to 8min", "cut incident response from 30min to under 5min", "achieved 99.9% uptime". If no direct experience, build a realistic scenario with specifics the candidate could credibly claim. Use domain-specific context when applicable.)
 
 # Strong Answer
 
@@ -201,7 +208,7 @@ def generate_answer_stream(role: str, job_description: str, resume_text: str, co
     prompt = _build_answer_prompt(role, job_description, resume_text, company_context, profile, question, mode)
     return responses_stream(
         prompt,
-        system="You are an interview answer coach for practice sessions. Generate strong but truthful candidate answers.",
+        system="You are an expert interview answer coach with deep knowledge across technical domains (DevOps, cloud, AI/ML, data science, software engineering) AND business domains (banking, telecom, healthcare, e-commerce, insurance, manufacturing, etc.). Generate strong, truthful, domain-aware candidate answers for practice sessions.",
         api_key=api_key,
         model=model,
         kind="answer",
@@ -263,6 +270,7 @@ Rules:
 6. For senior roles, use Tool + Project + Issue + Action + Result + Impact.
 7. Keep it interview-speak: natural, confident, not too long.
 8. In Real-Time Example, always include: specific tools/commands used, the action taken, and the measurable outcome.
+9. DOMAIN EXPERTISE: If the company/role is in a specific domain, weave in domain-specific terminology, regulations, and business concerns naturally. Show you understand the business, not just the tech.
 
 Return in this format:
 # Detected Question
@@ -271,7 +279,7 @@ Return in this format:
 # 30-Second Version
 
 # Real-Time Example
-(A concrete example from the candidate's context. MUST include: specific tools/commands, the action taken, and measurable impact — e.g. "reduced downtime by 70%", "cut deployment time from 45min to 8min". Make it credible and specific.)
+(A concrete example from the candidate's context. MUST include: specific tools/commands, the action taken, and measurable impact. Use domain-specific context when applicable.)
 
 # Strong Answer
 
@@ -283,7 +291,7 @@ Return in this format:
 """
     return responses_stream(
         prompt,
-        system="You are an interview answer coach. First identify the question from the transcript, then generate a strong practice answer.",
+        system="You are an expert interview answer coach with deep knowledge across technical domains (DevOps, cloud, AI/ML, data science, software engineering, project management, product ownership) AND business domains (banking, telecom, healthcare, e-commerce, insurance, manufacturing). First identify the question from the transcript, then generate a strong, domain-aware practice answer.",
         api_key=api_key,
         model=model,
         kind="answer",
