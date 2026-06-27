@@ -29,11 +29,12 @@ function App() {
   const [listening, setListening] = useState(false);
   const [autoMode, setAutoMode] = useState(true);
   const [corrections, setCorrections] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('speechCorrections') || '{}'); } catch { return {}; }
+    try { return JSON.parse(localStorage.getItem('speechCorrections') || '[]'); } catch { return []; }
   });
   const [showCorrectionInput, setShowCorrectionInput] = useState(false);
   const [correctionWrong, setCorrectionWrong] = useState('');
   const [correctionRight, setCorrectionRight] = useState('');
+  const [correctionDomain, setCorrectionDomain] = useState('');
   const recognitionRef = useRef(null);
   const isGeneratingRef = useRef(false);
   const transcriptRef = useRef('');
@@ -404,20 +405,50 @@ function App() {
 
   function saveCorrection() {
     if (correctionWrong.trim() && correctionRight.trim()) {
-      const updated = { ...corrections, [correctionWrong.trim().toLowerCase()]: correctionRight.trim() };
+      const entry = { wrong: correctionWrong.trim().toLowerCase(), correct: correctionRight.trim(), domain: correctionDomain.trim() || 'general' };
+      const updated = [...corrections, entry];
       setCorrections(updated);
       localStorage.setItem('speechCorrections', JSON.stringify(updated));
       setCorrectionWrong('');
       setCorrectionRight('');
+      setCorrectionDomain('');
       setShowCorrectionInput(false);
-      setStatus(`✅ Learned: "${correctionWrong.trim()}" → "${correctionRight.trim()}"`);
+      setStatus(`✅ Learned: "${entry.wrong}" → "${entry.correct}" (${entry.domain})`);
     }
   }
 
   function getCorrectionsHint() {
-    const entries = Object.entries(corrections);
-    if (entries.length === 0) return '';
-    return '\n\nUser-taught speech corrections (ALWAYS apply these):\n' + entries.map(([wrong, right]) => `- "${wrong}" means "${right}"`).join('\n');
+    if (corrections.length === 0) return '';
+    const lines = corrections.map(c => `- "${c.wrong}" means "${c.correct}"${c.domain !== 'general' ? ` [${c.domain}]` : ''}`);
+    return '\n\nUser-taught speech corrections (ALWAYS apply these when interpreting transcript):\n' + lines.join('\n');
+  }
+
+  function exportCorrections() {
+    const text = JSON.stringify(corrections, null, 2);
+    const blob = new Blob([text], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `speech-corrections-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function importCorrections(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const imported = JSON.parse(e.target.result);
+        if (Array.isArray(imported)) {
+          const merged = [...corrections, ...imported.filter(imp => !corrections.some(c => c.wrong === imp.wrong && c.correct === imp.correct))];
+          setCorrections(merged);
+          localStorage.setItem('speechCorrections', JSON.stringify(merged));
+          setStatus(`✅ Imported ${imported.length} corrections`);
+        }
+      } catch { setStatus('Error: Invalid corrections file'); }
+    };
+    reader.readAsText(file);
   }
 
   function downloadHistory() {
@@ -459,6 +490,16 @@ function App() {
         <textarea value={resumeText} onChange={e => setResumeText(e.target.value)} placeholder="Or paste resume text here" />
         <button onClick={analyzeProfile}>Analyze Resume + JD</button>
         {profile && <details open><summary>Candidate Profile</summary><pre>{JSON.stringify(profile, null, 2)}</pre></details>}
+        {corrections.length > 0 && <details className="corrections-panel">
+          <summary>Speech Corrections ({corrections.length})</summary>
+          <div className="corrections-list">
+            {corrections.map((c, i) => <div key={i} className="correction-item"><span className="corr-wrong">{c.wrong}</span> → <span className="corr-right">{c.correct}</span> <span className="corr-domain">{c.domain}</span><button className="corr-delete" onClick={() => { const u = corrections.filter((_, j) => j !== i); setCorrections(u); localStorage.setItem('speechCorrections', JSON.stringify(u)); }}>✕</button></div>)}
+          </div>
+          <div className="row">
+            <button onClick={exportCorrections}>Export</button>
+            <label className="file-btn"><input type="file" accept=".json" onChange={e => importCorrections(e.target.files[0])} hidden />Import</label>
+          </div>
+        </details>}
       </section>
 
       <section className="card listener">
@@ -491,8 +532,9 @@ function App() {
             <button className="vote-btn" onClick={() => setShowCorrectionInput(true)}>👎</button>
           </div>
           {showCorrectionInput && <div className="correction-input">
-            <input placeholder="What was heard wrong (e.g. our apps)" value={correctionWrong} onChange={e => setCorrectionWrong(e.target.value)} />
-            <input placeholder="What it should be (e.g. rApps)" value={correctionRight} onChange={e => setCorrectionRight(e.target.value)} />
+            <input placeholder="Heard wrong (e.g. our apps)" value={correctionWrong} onChange={e => setCorrectionWrong(e.target.value)} />
+            <input placeholder="Should be (e.g. rApps)" value={correctionRight} onChange={e => setCorrectionRight(e.target.value)} />
+            <input placeholder="Domain (e.g. telecom)" value={correctionDomain} onChange={e => setCorrectionDomain(e.target.value)} className="domain-input" />
             <button onClick={saveCorrection}>Save</button>
           </div>}
         </div>}

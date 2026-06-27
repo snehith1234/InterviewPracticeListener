@@ -60,3 +60,17 @@ pre { white-space:pre-wrap; background:#f8fafc; border:1px solid #e2e8f0; paddin
 .correction-input { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
 .correction-input input { flex:1; min-width:120px; padding:7px 10px; font-size:13px; border-radius:8px; }
 .correction-input button { padding:7px 14px; font-size:13px; background:#065f46; color:white; border-radius:8px; }
+
+.corrections-panel { margin-top:14px; border:1px solid #e2e8f0; border-radius:10px; padding:0; }
+.corrections-panel summary { padding:10px 14px; font-weight:600; font-size:13px; color:#475569; cursor:pointer; background:#f8fafc; border-radius:10px; }
+.corrections-panel[open] summary { border-radius:10px 10px 0 0; border-bottom:1px solid #e2e8f0; }
+.corrections-list { padding:8px 12px; max-height:160px; overflow:auto; }
+.correction-item { display:flex; align-items:center; gap:6px; font-size:12px; padding:4px 0; border-bottom:1px solid #f1f5f9; }
+.corr-wrong { color:#dc2626; font-weight:600; }
+.corr-right { color:#16a34a; font-weight:600; }
+.corr-domain { color:#6b7280; font-size:11px; background:#f1f5f9; padding:1px 6px; border-radius:4px; margin-left:auto; }
+.corr-delete { background:none; border:none; color:#94a3b8; font-size:14px; padding:2px 6px; cursor:pointer; min-width:auto; flex:none; }
+.corr-delete:hover { color:#dc2626; }
+.correction-input .domain-input { max-width:120px; flex:none; }
+.file-btn { display:inline-flex; align-items:center; padding:10px 14px; background:#e5e7eb; border-radius:10px; font-weight:600; font-size:inherit; cursor:pointer; }
+.file-btn:hover { filter:brightness(.97); }
