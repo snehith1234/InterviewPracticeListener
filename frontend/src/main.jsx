@@ -28,6 +28,12 @@ function App() {
   const [status, setStatus] = useState('');
   const [listening, setListening] = useState(false);
   const [autoMode, setAutoMode] = useState(true);
+  const [corrections, setCorrections] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('speechCorrections') || '{}'); } catch { return {}; }
+  });
+  const [showCorrectionInput, setShowCorrectionInput] = useState(false);
+  const [correctionWrong, setCorrectionWrong] = useState('');
+  const [correctionRight, setCorrectionRight] = useState('');
   const recognitionRef = useRef(null);
   const isGeneratingRef = useRef(false);
   const transcriptRef = useRef('');
@@ -279,9 +285,11 @@ function App() {
     setQuickAnswer('');
     setAnswer('');
     setDetected(null);
+    setShowCorrectionInput(false);
     setLoading('⚡ Quick answer...');
 
-    const body = JSON.stringify({ role, job_description: jobDescription, resume_text: resumeText, company_context: companyContext, profile: profile || {}, transcript: currentTranscript, mode: 'practice', model });
+    const contextWithCorrections = (companyContext || '') + getCorrectionsHint();
+    const body = JSON.stringify({ role, job_description: jobDescription, resume_text: resumeText, company_context: contextWithCorrections, profile: profile || {}, transcript: currentTranscript, mode: 'practice', model });
 
     // Fire both requests simultaneously
     const shortPromise = streamSSE(`${API_BASE}/coach/quick-short`, body, (text) => setQuickAnswer(text));
@@ -394,6 +402,24 @@ function App() {
     }
   }
 
+  function saveCorrection() {
+    if (correctionWrong.trim() && correctionRight.trim()) {
+      const updated = { ...corrections, [correctionWrong.trim().toLowerCase()]: correctionRight.trim() };
+      setCorrections(updated);
+      localStorage.setItem('speechCorrections', JSON.stringify(updated));
+      setCorrectionWrong('');
+      setCorrectionRight('');
+      setShowCorrectionInput(false);
+      setStatus(`✅ Learned: "${correctionWrong.trim()}" → "${correctionRight.trim()}"`);
+    }
+  }
+
+  function getCorrectionsHint() {
+    const entries = Object.entries(corrections);
+    if (entries.length === 0) return '';
+    return '\n\nUser-taught speech corrections (ALWAYS apply these):\n' + entries.map(([wrong, right]) => `- "${wrong}" means "${right}"`).join('\n');
+  }
+
   function downloadHistory() {
     const text = history.map((h, i) => `# Question ${history.length - i}\n${h.question}\n\n${h.answer}\n`).join('\n---\n');
     const blob = new Blob([text], { type: 'text/markdown' });
@@ -458,7 +484,18 @@ function App() {
         <h2>3. Suggested Answer / Feedback</h2>
         {loading && <div className="loading">{loading}</div>}
         {status && <div className="status">{status}</div>}
-        {quickAnswer && <div className="quick-answer"><h3>⚡ Say This Now</h3><ReactMarkdown>{quickAnswer}</ReactMarkdown></div>}
+        {quickAnswer && <div className="quick-answer"><h3>⚡ Say This Now</h3><ReactMarkdown>{quickAnswer}</ReactMarkdown>
+          <div className="vote-row">
+            <span className="vote-label">Heard correctly?</span>
+            <button className="vote-btn" onClick={() => setShowCorrectionInput(false)}>👍</button>
+            <button className="vote-btn" onClick={() => setShowCorrectionInput(true)}>👎</button>
+          </div>
+          {showCorrectionInput && <div className="correction-input">
+            <input placeholder="What was heard wrong (e.g. our apps)" value={correctionWrong} onChange={e => setCorrectionWrong(e.target.value)} />
+            <input placeholder="What it should be (e.g. rApps)" value={correctionRight} onChange={e => setCorrectionRight(e.target.value)} />
+            <button onClick={saveCorrection}>Save</button>
+          </div>}
+        </div>}
         {answer && <div className="markdown"><ReactMarkdown>{answer}</ReactMarkdown></div>}
         {feedback && <><h2>Feedback on Your Answer</h2><div className="markdown"><ReactMarkdown>{feedback}</ReactMarkdown></div></>}
 
