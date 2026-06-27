@@ -306,7 +306,10 @@ Transcript: {transcript[-3000:]}
 
 Reply in EXACTLY this format (nothing else):
 **Q:** [the detected question]
-**Quick Answer:** [2-3 sentence answer they can start speaking right now]
+
+**Quick Answer:**
+
+[2-3 sentence answer they can start speaking right now]
 """
     return responses_stream(
         prompt,
