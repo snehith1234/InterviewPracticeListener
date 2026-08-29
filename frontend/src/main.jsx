@@ -504,8 +504,8 @@ function App() {
         <h2>1. Candidate Context</h2>
         <label>Role / Title</label>
         <input value={role} onChange={e => setRole(e.target.value)} placeholder="Senior DevOps Engineer" />
-        <label>Company / Domain Context</label>
-        <input value={companyContext} onChange={e => setCompanyContext(e.target.value)} placeholder="Banking, healthcare, telecom, e-commerce..." />
+        <label>Target Company / Industry</label>
+        <input value={companyContext} onChange={e => setCompanyContext(e.target.value)} placeholder="Company name and industry you're interviewing for — e.g. JPMorgan, banking; Verizon, telecom..." />
         <label>Job Description</label>
         <textarea value={jobDescription} onChange={e => setJobDescription(e.target.value)} placeholder="Paste job requirements here" />
         <label>Resume</label>
