@@ -2,7 +2,14 @@ from typing import Generator
 from app.services.llm_client import responses_json, responses_text, responses_stream
 
 
-def build_profile(role: str, job_description: str, resume_text: str, company_context: str, api_key: str | None, model: str | None) -> dict:
+def build_profile(role: str, job_description: str, resume_text: str, company_context: str, additional_context: str, api_key: str | None, model: str | None) -> dict:
+    additional_block = ""
+    if additional_context and additional_context.strip():
+        additional_block = f"""
+
+Additional context provided by the candidate (work samples, project details, certifications, portfolio notes, etc.):
+{additional_context[:20000]}
+"""
     prompt = f"""
 Analyze this candidate context for interview answer coaching.
 
@@ -17,7 +24,7 @@ Company/domain/context:
 
 Candidate resume:
 {resume_text[:20000]}
-
+{additional_block}
 Return JSON with:
 - candidate_summary
 - key_skills
@@ -99,12 +106,16 @@ Return:
 Give score out of 10.
 
 # What Was Good
+(Bullet list)
 
 # What Was Missing
+(Bullet list)
 
 # Stronger Version
+(Bullet points — each line is one spoken sentence starting with "- ". Write it as natural talking points the candidate would say out loud, not paragraphs.)
 
 # Short Version to Memorize
+(Bullet points — each line is one spoken sentence starting with "- ". 3-4 key sentences to remember.)
 
 # Next Follow-Up to Practice
 """
@@ -182,6 +193,11 @@ Interview question:
 Mode:
 {mode}
 
+CRITICAL OUTPUT FORMAT — TALKING POINTS:
+Every section that contains an answer (30-Second Version, Real-Time Example, Strong Answer, Follow-Up Answer Hints) MUST be written as a sequence of individual talking points — one sentence per line, each line starting with a bullet "- ".
+Write each point as a natural sentence the candidate would actually say out loud in an interview. Think of it as scripted speech, not written prose.
+Do NOT write paragraphs or multi-sentence blocks. Each bullet is one standalone spoken sentence.
+
 Rules:
 1. Start with a direct answer.
 2. Align to resume and JD.
@@ -203,19 +219,25 @@ Rules:
 
 Return in this format:
 # 30-Second Version
+(Bullet points — each line is one spoken sentence starting with "- ")
 
 # Real-Time Example
-(A concrete example from the candidate's resume/experience. MUST include: specific tools/commands used, the action taken, and the measurable impact — e.g. "reduced deployment time from 45min to 8min", "cut incident response from 30min to under 5min", "achieved 99.9% uptime". If no direct experience, build a realistic scenario with specifics the candidate could credibly claim. Use domain-specific context when applicable.)
+(Bullet points — each line is one spoken sentence starting with "- ". MUST include: specific tools/commands used, the action taken, and the measurable impact — e.g. "reduced deployment time from 45min to 8min", "cut incident response from 30min to under 5min", "achieved 99.9% uptime". If no direct experience, build a realistic scenario with specifics the candidate could credibly claim. Use domain-specific context when applicable.)
 
 # Strong Answer
+(Bullet points — each line is one spoken sentence starting with "- ". This is the full answer as a sequence of individual talking points the candidate would say.)
 
 # Key Points to Mention
+(Bullet list of short reminders)
 
 # Resume/JD Alignment
+(Bullet list)
 
 # Possible Follow-Up Questions
+(Bullet list)
 
 # Follow-Up Answer Hints
+(Bullet points — each line is one spoken sentence starting with "- ")
 """
 
 
@@ -304,22 +326,32 @@ Rules:
 8. In Real-Time Example, always include: specific tools/commands used, the action taken, and the measurable outcome.
 9. DOMAIN EXPERTISE: If the company/role is in a specific domain, weave in domain-specific terminology, regulations, and business concerns naturally. Show you understand the business, not just the tech.
 
+CRITICAL OUTPUT FORMAT — TALKING POINTS:
+Every section that contains an answer (30-Second Version, Real-Time Example, Strong Answer, Follow-Up Answer Hints) MUST be written as a sequence of individual talking points — one sentence per line, each line starting with a bullet "- ".
+Write each point as a natural sentence the candidate would actually say out loud in an interview. Think of it as scripted speech, not written prose.
+Do NOT write paragraphs or multi-sentence blocks. Each bullet is one standalone spoken sentence.
+
 Return in this format:
 # Detected Question
 (The clear interview question you identified)
 
 # 30-Second Version
+(Bullet points — each line is one spoken sentence starting with "- ")
 
 # Real-Time Example
-(A concrete example from the candidate's context. MUST include: specific tools/commands, the action taken, and measurable impact. Use domain-specific context when applicable.)
+(Bullet points — each line is one spoken sentence starting with "- ". MUST include: specific tools/commands, the action taken, and measurable impact. Use domain-specific context when applicable.)
 
 # Strong Answer
+(Bullet points — each line is one spoken sentence starting with "- ". Full answer as a sequence of individual talking points.)
 
 # Key Points to Mention
+(Bullet list of short reminders)
 
 # Possible Follow-Up Questions
+(Bullet list)
 
 # Follow-Up Answer Hints
+(Bullet points — each line is one spoken sentence starting with "- ")
 """
     return responses_stream(
         prompt,

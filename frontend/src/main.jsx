@@ -15,6 +15,8 @@ function App() {
   const [companyContext, setCompanyContext] = useState('');
   const [resumeText, setResumeText] = useState('');
   const [resumeName, setResumeName] = useState('');
+  const [additionalContext, setAdditionalContext] = useState('');
+  const [additionalContextName, setAdditionalContextName] = useState('');
   const [profile, setProfile] = useState(null);
   const [manualQuestion, setManualQuestion] = useState('');
   const [transcript, setTranscript] = useState('');
@@ -68,6 +70,26 @@ function App() {
     }
   }
 
+  async function uploadContextFile(file) {
+    if (!file) return;
+    setLoading('Uploading context file...');
+    setStatus('');
+    try {
+      const form = new FormData();
+      form.append('file', file);
+      const res = await fetch(`${API_BASE}/upload/context`, { method: 'POST', body: form });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Upload failed');
+      setAdditionalContext(prev => prev ? `${prev}\n\n--- ${data.filename} ---\n${data.text}` : data.text || '');
+      setAdditionalContextName(prev => prev ? `${prev}, ${data.filename}` : data.filename || file.name);
+      setStatus(`Context file parsed: ${data.characters} characters`);
+    } catch (err) {
+      setStatus(`Error: ${err.message}`);
+    } finally {
+      setLoading('');
+    }
+  }
+
   async function testModel() {
     setLoading('Testing model...');
     setStatus('');
@@ -93,7 +115,7 @@ function App() {
       const res = await fetch(`${API_BASE}/coach/profile`, {
         method: 'POST',
         headers,
-        body: JSON.stringify({ role, job_description: jobDescription, resume_text: resumeText, company_context: companyContext, model })
+        body: JSON.stringify({ role, job_description: jobDescription, resume_text: resumeText, company_context: companyContext, additional_context: additionalContext, model })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || 'Profile analysis failed');
@@ -490,6 +512,10 @@ function App() {
         <input type="file" accept=".pdf,.docx,.txt" onChange={e => uploadResume(e.target.files[0])} />
         {resumeName && <small>Loaded: {resumeName}</small>}
         <textarea value={resumeText} onChange={e => setResumeText(e.target.value)} placeholder="Or paste resume text here" />
+        <label>Additional Context <small>(work samples, project docs, certifications, portfolio notes)</small></label>
+        <input type="file" accept=".pdf,.docx,.txt" onChange={e => uploadContextFile(e.target.files[0])} />
+        {additionalContextName && <small>Loaded: {additionalContextName}</small>}
+        <textarea value={additionalContext} onChange={e => setAdditionalContext(e.target.value)} placeholder="Upload a file above or paste extra context about your work, projects, certifications, etc." />
         <button onClick={analyzeProfile}>Analyze Resume + JD</button>
         {profile && <details open><summary>Candidate Profile</summary><pre>{JSON.stringify(profile, null, 2)}</pre></details>}
         <details className="corrections-panel">

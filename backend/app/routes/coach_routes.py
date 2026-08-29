@@ -14,6 +14,7 @@ class ProfileRequest(BaseModel):
     job_description: str
     resume_text: str
     company_context: str = ""
+    additional_context: str = ""
     model: Optional[str] = None
 
 class DetectRequest(BaseModel):
@@ -59,7 +60,7 @@ def _key(header_key: Optional[str]) -> Optional[str]:
 def profile(req: ProfileRequest, x_openai_api_key: Optional[str] = Header(default=None)):
     if not req.resume_text.strip() or not req.job_description.strip():
         raise HTTPException(status_code=400, detail="Resume text and job description are required.")
-    return build_profile(req.role, req.job_description, req.resume_text, req.company_context, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
+    return build_profile(req.role, req.job_description, req.resume_text, req.company_context, req.additional_context, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
 
 @router.post("/detect-question")
 def detect(req: DetectRequest, x_openai_api_key: Optional[str] = Header(default=None)):

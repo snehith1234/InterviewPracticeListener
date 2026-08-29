@@ -21,3 +21,20 @@ async def upload_resume(file: UploadFile = File(...)):
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Could not parse resume: {exc}")
     return {"filename": safe_name, "text": text, "characters": len(text)}
+
+
+@router.post("/context")
+async def upload_context(file: UploadFile = File(...)):
+    """Upload additional context document (work samples, portfolio notes, project docs, etc.)."""
+    lower = file.filename.lower()
+    if not lower.endswith((".pdf", ".docx", ".txt")):
+        raise HTTPException(status_code=400, detail="Only PDF, DOCX, or TXT files are supported.")
+    safe_name = os.path.basename(file.filename)
+    path = os.path.join(UPLOAD_DIR, safe_name)
+    with open(path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    try:
+        text = extract_text(path)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Could not parse context file: {exc}")
+    return {"filename": safe_name, "text": text, "characters": len(text)}
