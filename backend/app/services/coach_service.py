@@ -71,8 +71,8 @@ Return JSON:
     )
 
 
-def generate_answer(role: str, job_description: str, resume_text: str, company_context: str, profile: dict, question: str, mode: str, api_key: str | None, model: str | None) -> str:
-    prompt = _build_answer_prompt(role, job_description, resume_text, company_context, profile, question, mode)
+def generate_answer(role: str, job_description: str, resume_text: str, company_context: str, additional_context: str, profile: dict, question: str, mode: str, api_key: str | None, model: str | None) -> str:
+    prompt = _build_answer_prompt(role, job_description, resume_text, company_context, additional_context, profile, question, mode)
     return responses_text(
         prompt,
         system="You are an expert interview answer coach with deep knowledge across technical domains (DevOps, cloud, AI/ML, data science, software engineering) AND business domains (banking, telecom, healthcare, e-commerce, insurance, manufacturing, etc.). Generate strong, truthful, domain-aware candidate answers for practice sessions.",
@@ -128,8 +128,15 @@ Give score out of 10.
     )
 
 
-def _build_answer_prompt(role: str, job_description: str, resume_text: str, company_context: str, profile: dict, question: str, mode: str) -> str:
+def _build_answer_prompt(role: str, job_description: str, resume_text: str, company_context: str, additional_context: str, profile: dict, question: str, mode: str) -> str:
     """Build the answer prompt, trimming context if profile exists."""
+    additional_block = ""
+    if additional_context and additional_context.strip():
+        additional_block = f"""
+
+IMPORTANT — Additional context provided by the candidate (their actual domain experience, work details, project notes, etc.). Use this to ground your answer accurately. Do NOT contradict this context:
+{additional_context[:15000]}
+"""
     if profile and profile.get("candidate_summary"):
         # Profile exists — use compact context instead of full resume+JD
         context_block = f"""
@@ -144,7 +151,7 @@ Key JD requirements (summarized from profile):
 
 Company/domain/context:
 {company_context or 'Not provided'}
-"""
+{additional_block}"""
     else:
         # No profile — use full text (first-time flow)
         context_block = f"""
@@ -162,7 +169,7 @@ Candidate profile analysis:
 
 Resume text:
 {resume_text[:18000]}
-"""
+{additional_block}"""
     return f"""
 The user is practicing for an interview. Generate a resume/JD-aligned answer for the detected interview question.
 
@@ -241,9 +248,9 @@ Return in this format:
 """
 
 
-def generate_answer_stream(role: str, job_description: str, resume_text: str, company_context: str, profile: dict, question: str, mode: str, api_key: str | None, model: str | None) -> Generator[str, None, None]:
+def generate_answer_stream(role: str, job_description: str, resume_text: str, company_context: str, additional_context: str, profile: dict, question: str, mode: str, api_key: str | None, model: str | None) -> Generator[str, None, None]:
     """Stream answer tokens for low-latency perceived response."""
-    prompt = _build_answer_prompt(role, job_description, resume_text, company_context, profile, question, mode)
+    prompt = _build_answer_prompt(role, job_description, resume_text, company_context, additional_context, profile, question, mode)
     return responses_stream(
         prompt,
         system="You are an expert interview answer coach with deep knowledge across technical domains (DevOps, cloud, AI/ML, data science, software engineering) AND business domains (banking, telecom, healthcare, e-commerce, insurance, manufacturing, etc.). Generate strong, truthful, domain-aware candidate answers for practice sessions.",
@@ -253,8 +260,15 @@ def generate_answer_stream(role: str, job_description: str, resume_text: str, co
     )
 
 
-def detect_and_answer_stream(role: str, job_description: str, resume_text: str, company_context: str, profile: dict, transcript: str, mode: str, api_key: str | None, model: str | None) -> Generator[str, None, None]:
+def detect_and_answer_stream(role: str, job_description: str, resume_text: str, company_context: str, additional_context: str, profile: dict, transcript: str, mode: str, api_key: str | None, model: str | None) -> Generator[str, None, None]:
     """Combined: detect question from transcript AND generate answer in one LLM call (streamed)."""
+    additional_block = ""
+    if additional_context and additional_context.strip():
+        additional_block = f"""
+
+IMPORTANT — Additional context provided by the candidate (their actual domain experience, work details, project notes, etc.). Use this to ground your answer accurately. Do NOT contradict this context:
+{additional_context[:15000]}
+"""
     if profile and profile.get("candidate_summary"):
         context_block = f"""
 Candidate profile analysis:
@@ -268,7 +282,7 @@ Key JD requirements:
 
 Company/domain/context:
 {company_context or 'Not provided'}
-"""
+{additional_block}"""
     else:
         context_block = f"""
 Role/title:
@@ -282,7 +296,7 @@ Company/domain/context:
 
 Resume text:
 {resume_text[:18000]}
-"""
+{additional_block}"""
     prompt = f"""
 The user is in a mock interview practice session. Below is a transcript from the conversation. Your job:
 1. Identify the latest clear interview question from the transcript.
@@ -362,12 +376,15 @@ Return in this format:
     )
 
 
-def quick_short_answer_stream(role: str, job_description: str, resume_text: str, company_context: str, profile: dict, transcript: str, api_key: str | None, model: str | None) -> Generator[str, None, None]:
+def quick_short_answer_stream(role: str, job_description: str, resume_text: str, company_context: str, additional_context: str, profile: dict, transcript: str, api_key: str | None, model: str | None) -> Generator[str, None, None]:
     """Ultra-fast first response: detect question + give ONLY a 2-sentence answer. Streams immediately."""
+    additional_hint = ""
+    if additional_context and additional_context.strip():
+        additional_hint = f" Candidate's additional context: {additional_context[:3000]}."
     if profile and profile.get("candidate_summary"):
-        context_block = f"Profile: {profile.get('candidate_summary', '')}. Skills: {', '.join(profile.get('key_skills', [])[:8])}. Style: {profile.get('answer_style_guidance', '')}."
+        context_block = f"Profile: {profile.get('candidate_summary', '')}. Skills: {', '.join(profile.get('key_skills', [])[:8])}. Style: {profile.get('answer_style_guidance', '')}.{additional_hint}"
     else:
-        context_block = f"Role: {role}. Key JD: {job_description[:2000]}. Resume highlights: {resume_text[:2000]}."
+        context_block = f"Role: {role}. Key JD: {job_description[:2000]}. Resume highlights: {resume_text[:2000]}.{additional_hint}"
 
     prompt = f"""
 From this transcript, identify the interview question and give a SHORT 2-3 sentence answer the candidate can say immediately.

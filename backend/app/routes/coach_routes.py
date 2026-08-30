@@ -26,6 +26,7 @@ class AnswerRequest(BaseModel):
     job_description: str
     resume_text: str
     company_context: str = ""
+    additional_context: str = ""
     profile: dict = {}
     question: str
     mode: str = "practice"
@@ -36,6 +37,7 @@ class QuickAnswerRequest(BaseModel):
     job_description: str
     resume_text: str
     company_context: str = ""
+    additional_context: str = ""
     profile: dict = {}
     transcript: str
     mode: str = "practice"
@@ -72,7 +74,7 @@ def detect(req: DetectRequest, x_openai_api_key: Optional[str] = Header(default=
 def answer(req: AnswerRequest, x_openai_api_key: Optional[str] = Header(default=None)):
     if not req.question.strip():
         raise HTTPException(status_code=400, detail="Question is required.")
-    content = generate_answer(req.role, req.job_description, req.resume_text, req.company_context, req.profile, req.question, req.mode, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
+    content = generate_answer(req.role, req.job_description, req.resume_text, req.company_context, req.additional_context, req.profile, req.question, req.mode, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
     return {"answer": content}
 
 @router.post("/answer-stream")
@@ -80,7 +82,7 @@ def answer_stream(req: AnswerRequest, x_openai_api_key: Optional[str] = Header(d
     """Stream answer tokens via Server-Sent Events for low-latency display."""
     if not req.question.strip():
         raise HTTPException(status_code=400, detail="Question is required.")
-    gen = generate_answer_stream(req.role, req.job_description, req.resume_text, req.company_context, req.profile, req.question, req.mode, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
+    gen = generate_answer_stream(req.role, req.job_description, req.resume_text, req.company_context, req.additional_context, req.profile, req.question, req.mode, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
     def event_stream():
         for chunk in gen:
             yield f"data: {json.dumps(chunk)}\n\n"
@@ -92,7 +94,7 @@ def quick_answer(req: QuickAnswerRequest, x_openai_api_key: Optional[str] = Head
     """Combined detect+answer in one streamed call. Skips separate detect round-trip."""
     if not req.transcript.strip():
         raise HTTPException(status_code=400, detail="Transcript is required.")
-    gen = detect_and_answer_stream(req.role, req.job_description, req.resume_text, req.company_context, req.profile, req.transcript, req.mode, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
+    gen = detect_and_answer_stream(req.role, req.job_description, req.resume_text, req.company_context, req.additional_context, req.profile, req.transcript, req.mode, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
     def event_stream():
         for chunk in gen:
             yield f"data: {json.dumps(chunk)}\n\n"
@@ -104,7 +106,7 @@ def quick_short(req: QuickAnswerRequest, x_openai_api_key: Optional[str] = Heade
     """Ultra-fast 2-sentence answer for immediate display while full answer loads."""
     if not req.transcript.strip():
         raise HTTPException(status_code=400, detail="Transcript is required.")
-    gen = quick_short_answer_stream(req.role, req.job_description, req.resume_text, req.company_context, req.profile, req.transcript, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
+    gen = quick_short_answer_stream(req.role, req.job_description, req.resume_text, req.company_context, req.additional_context, req.profile, req.transcript, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
     def event_stream():
         for chunk in gen:
             yield f"data: {json.dumps(chunk)}\n\n"

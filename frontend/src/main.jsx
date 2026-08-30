@@ -314,7 +314,7 @@ function App() {
     setLoading('⚡ Quick answer...');
 
     const contextWithCorrections = (companyContext || '') + getCorrectionsHint();
-    const body = JSON.stringify({ role, job_description: jobDescription, resume_text: resumeText, company_context: contextWithCorrections, profile: profile || {}, transcript: currentTranscript, mode: 'practice', model });
+    const body = JSON.stringify({ role, job_description: jobDescription, resume_text: resumeText, company_context: contextWithCorrections, additional_context: additionalContext, profile: profile || {}, transcript: currentTranscript, mode: 'practice', model });
 
     // Fire both requests simultaneously
     const shortPromise = streamSSE(`${API_BASE}/coach/quick-short`, body, (text) => setQuickAnswer(text));
@@ -416,7 +416,7 @@ function App() {
     setLoading('Generating answer...');
     setAnswer('');
     try {
-      const body = JSON.stringify({ role, job_description: jobDescription, resume_text: resumeText, company_context: companyContext, profile: profile || {}, question, mode: 'practice', model });
+      const body = JSON.stringify({ role, job_description: jobDescription, resume_text: resumeText, company_context: companyContext, additional_context: additionalContext, profile: profile || {}, question, mode: 'practice', model });
       const fullText = await streamSSE(`${API_BASE}/coach/answer-stream`, body, (text) => setAnswer(text));
       setStatus('');
       setHistory(prev => [{ question, answer: fullText, createdAt: new Date().toISOString() }, ...prev]);
