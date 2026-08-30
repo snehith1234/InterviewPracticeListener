@@ -209,7 +209,7 @@ STYLE RULES:
 - Instead, give ONE OR TWO small concrete examples from actual project work. For example: "In my healthcare projects, I worked on member enrollment and claims processing, where we had to validate not only the UI but also whether the correct data was being updated in the database." That makes the candidate sound like they've actually done the work.
 - Use simple spoken English instead of polished corporate language.
 - Keep answers focused on the exact question being asked.
-- Avoid unnecessary phrases such as "I'm confident I can transition effectively," "the fundamentals are universal," "I see a great match," "I've built my career around," "my experience isn't limited to," "Besides my technical skills," or similar generic interview statements.
+- Avoid unnecessary phrases such as "I'm confident I can transition effectively," "the fundamentals are universal," "I see a great match," "I've built my career around," "my experience isn't limited to," "Besides my technical skills," "One key part of my work is," "This approach caught," "has prepared me well," "I want to be clear that," or similar generic interview statements. Also avoid overly formal words like "triage," "facilitating," "ensuring" — use simpler alternatives like "working through issues," "helping with," "making sure."
 - Use shorter sentences and a natural flow, like someone explaining their actual experience.
 - Prefer specific examples of what the candidate did instead of broad claims about skills.
 - It is okay for the answer to sound slightly imperfect or conversational. It should NOT sound memorized.
@@ -228,15 +228,13 @@ BAD example (keyword-stuffed, tries to cover every JD line):
 "I have spent over 13 years in software testing, with a strong focus on automation using Selenium WebDriver for UI and REST Assured for API testing. I'm also skilled in SQL, which helps me validate database results accurately, especially in complex systems like healthcare. Besides my technical skills, I've taken on leadership roles like coordinating testing efforts during sprints, assigning tasks, mentoring junior testers, and facilitating defect triage meetings. I'm confident I can learn domain specifics quickly and apply my automation expertise and team coordination skills to this role. I'm comfortable working independently or as part of a team and communicating clearly with developers, managers, and business stakeholders."
 
 GOOD example (natural, concrete, sounds like a real person):
-Sure. I have over 13 years of experience in software testing. A major part of my work has been automation, mainly using Selenium WebDriver with Java for UI testing and REST Assured for API testing. I also use SQL quite a bit for backend validation.
+Sure. I have over 13 years of experience in software testing, and more than five years of that has been focused on automation. I've mainly worked with Selenium WebDriver for UI testing, REST Assured for API testing, and SQL for backend validation.
 
-For example, in my healthcare projects, I've worked on workflows like member enrollment and claims processing, where we had to validate not only what was happening on the UI, but also whether the correct data was being updated in the database.
+In my healthcare projects, I worked on areas like member enrollment and claims processing. So when I test a workflow, I don't just check what happens on the screen. I also verify the database to make sure the right records are created or updated.
 
-In my recent roles, I've been involved from the requirements stage through release. I work with product owners and developers to understand the requirements, identify the test scenarios, decide what should be automated, and then manage the execution and defects. We also integrated our automation with Jenkins so the regression suite could run with new builds.
+I've also taken on more lead responsibilities over time. I've worked with small QA teams, reviewed automation scripts, helped divide the testing work, and worked with developers when we found important issues. We also integrated our automation with Jenkins so the tests could run automatically with new builds.
 
-I've also been taking more of a lead role — coordinating work within the QA team, reviewing test cases, helping junior testers, and working with developers during defect triage when we have issues blocking a release.
-
-My background is mostly healthcare rather than banking, so banking would be a new domain for me. But I'm used to applications with complex business rules and a lot of backend data validation, so I would approach it the same way — first understand the business flow and then build the right test coverage around it.
+Most of my experience is in healthcare, so banking would be a new domain for me. But I'm used to applications with detailed business rules, a lot of data validation, and complex workflows. I'm comfortable learning the business side and applying the testing experience I already have.
 
 Return in this format:
 # 30-Second Version
