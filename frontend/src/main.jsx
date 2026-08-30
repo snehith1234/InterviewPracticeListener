@@ -306,7 +306,7 @@ function App() {
 
   async function twoPhaseAnswer(currentTranscript) {
     // Phase 1: Ultra-fast short answer (2-3 sentences)
-    // Phase 2: Full detailed answer (streams in parallel after short answer starts)
+    // Phase 2: Full detailed answer that CONTINUES from the quick answer
     setQuickAnswer('');
     setAnswer('');
     setDetected(null);
@@ -314,21 +314,21 @@ function App() {
     setLoading('⚡ Quick answer...');
 
     const contextWithCorrections = (companyContext || '') + getCorrectionsHint();
-    const body = JSON.stringify({ role, job_description: jobDescription, resume_text: resumeText, company_context: contextWithCorrections, additional_context: additionalContext, profile: profile || {}, transcript: currentTranscript, mode: 'practice', model });
+    const baseBody = { role, job_description: jobDescription, resume_text: resumeText, company_context: contextWithCorrections, additional_context: additionalContext, profile: profile || {}, transcript: currentTranscript, mode: 'practice', model };
 
-    // Fire both requests simultaneously
-    const shortPromise = streamSSE(`${API_BASE}/coach/quick-short`, body, (text) => setQuickAnswer(text));
-    const fullPromise = streamSSE(`${API_BASE}/coach/quick-answer`, body, (text) => setAnswer(text));
-
+    // Phase 1: Get quick answer first
+    let quickText = '';
     try {
-      await shortPromise;
-      setLoading('Generating detailed answer...');
+      quickText = await streamSSE(`${API_BASE}/coach/quick-short`, JSON.stringify(baseBody), (text) => setQuickAnswer(text));
     } catch (err) {
       setStatus(`Error: ${err.message}`);
     }
 
+    // Phase 2: Send quick answer to full answer so it continues from it
+    setLoading('Generating detailed answer...');
     try {
-      const fullText = await fullPromise;
+      const fullBody = JSON.stringify({ ...baseBody, quick_answer: quickText || '' });
+      const fullText = await streamSSE(`${API_BASE}/coach/quick-answer`, fullBody, (text) => setAnswer(text));
       setStatus('');
       setLoading('');
       if (fullText) {

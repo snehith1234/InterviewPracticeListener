@@ -299,7 +299,7 @@ def generate_answer_stream(role: str, job_description: str, resume_text: str, co
     )
 
 
-def detect_and_answer_stream(role: str, job_description: str, resume_text: str, company_context: str, additional_context: str, profile: dict, transcript: str, mode: str, api_key: str | None, model: str | None) -> Generator[str, None, None]:
+def detect_and_answer_stream(role: str, job_description: str, resume_text: str, company_context: str, additional_context: str, profile: dict, transcript: str, quick_answer: str, mode: str, api_key: str | None, model: str | None) -> Generator[str, None, None]:
     """Combined: detect question from transcript AND generate answer in one LLM call (streamed)."""
     additional_block = ""
     if additional_context and additional_context.strip():
@@ -307,6 +307,22 @@ def detect_and_answer_stream(role: str, job_description: str, resume_text: str, 
 
 IMPORTANT — Additional context provided by the candidate (their actual domain experience, work details, project notes, etc.). Use this to ground your answer accurately. Do NOT contradict this context:
 {additional_context[:15000]}
+"""
+
+    quick_answer_block = ""
+    if quick_answer and quick_answer.strip():
+        quick_answer_block = f"""
+
+CRITICAL — CONTINUE FROM THIS QUICK ANSWER:
+The candidate may already be speaking the Quick Answer shown below. You MUST build the entire answer around it. Preserve the same story, technical approach, example, and sequence. Do NOT contradict it or restart with a different answer.
+
+Quick Answer already given:
+{quick_answer}
+
+All sections must be consistent with this Quick Answer:
+- 30-Second Version = Quick Answer ideas expanded to 3-5 sentences.
+- Strong Answer = Quick Answer ideas expanded to 7-8 sentences with more detail. The first 2 sentences of Strong Answer must match the Quick Answer.
+- Real-Time Example = Expand the SAME example/scenario from the Quick Answer with more detail. Do NOT introduce a different project or different technical solution.
 """
     if profile and profile.get("candidate_summary"):
         context_block = f"""
@@ -321,7 +337,7 @@ Key JD requirements:
 
 Company/domain/context:
 {company_context or 'Not provided'}
-{additional_block}"""
+{additional_block}{quick_answer_block}"""
     else:
         context_block = f"""
 Role/title:
@@ -335,11 +351,12 @@ Company/domain/context:
 
 Resume text:
 {resume_text[:18000]}
-{additional_block}"""
+{additional_block}{quick_answer_block}"""
     prompt = f"""
 The user is in a mock interview practice session. Below is a transcript from the conversation. Your job:
 1. Identify the latest clear interview question from the transcript.
 2. Generate a strong practice answer aligned to the candidate's context.
+{"3. IMPORTANT: A Quick Answer has already been given to the candidate. ALL sections must continue from that same answer. Do NOT start a different story or approach." if quick_answer_block else ""}
 
 IMPORTANT ETHICAL BOUNDARY:
 This is for mock interviews, practice sessions, or situations where AI assistance is allowed.

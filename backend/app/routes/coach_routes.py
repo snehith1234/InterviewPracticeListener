@@ -40,6 +40,7 @@ class QuickAnswerRequest(BaseModel):
     additional_context: str = ""
     profile: dict = {}
     transcript: str
+    quick_answer: str = ""
     mode: str = "practice"
     model: Optional[str] = None
 
@@ -94,7 +95,7 @@ def quick_answer(req: QuickAnswerRequest, x_openai_api_key: Optional[str] = Head
     """Combined detect+answer in one streamed call. Skips separate detect round-trip."""
     if not req.transcript.strip():
         raise HTTPException(status_code=400, detail="Transcript is required.")
-    gen = detect_and_answer_stream(req.role, req.job_description, req.resume_text, req.company_context, req.additional_context, req.profile, req.transcript, req.mode, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
+    gen = detect_and_answer_stream(req.role, req.job_description, req.resume_text, req.company_context, req.additional_context, req.profile, req.transcript, req.quick_answer, req.mode, _key(x_openai_api_key), req.model or DEFAULT_MODEL)
     def event_stream():
         for chunk in gen:
             yield f"data: {json.dumps(chunk)}\n\n"
