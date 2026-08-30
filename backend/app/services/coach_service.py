@@ -112,10 +112,10 @@ Give score out of 10.
 (Bullet list)
 
 # Stronger Version
-(Rewrite as natural conversational talking points — each "- " line is one thought the candidate would say out loud. Use natural connectors like "So...", "Then...", "For example...". Sound like a real person, not a keyword-stuffed bot.)
+(Rewrite as natural short paragraphs — 2-4 sentences each, grouped by thought. Should sound like a real person talking in an interview, not a keyword-stuffed script. Use natural transitions between paragraphs.)
 
 # Short Version to Memorize
-(3-4 key sentences written naturally — something you could actually memorize and say.)
+(3-4 sentences written naturally — something you could actually say from memory.)
 
 # Next Follow-Up to Practice
 """
@@ -200,45 +200,54 @@ Interview question:
 Mode:
 {mode}
 
-CRITICAL OUTPUT FORMAT — NATURAL CONVERSATIONAL TALKING POINTS:
+CRITICAL OUTPUT FORMAT — NATURAL SPOKEN ANSWER:
 Write every answer section as the candidate would ACTUALLY SPEAK in a real interview — natural, conversational, human.
-- Each line starts with "- " and is ONE thought the person would say.
-- Use natural connectors between points: "So what I usually do is...", "Then I...", "Another important thing I check is...", "For example, in one case I...", "What that gave us was..."
-- Do NOT start every line with "I" — vary sentence openings naturally.
-- Do NOT cram tools, metrics, and buzzwords into every single sentence. Spread them naturally across the answer.
-- Do NOT use corporate jargon like "leveraging", "streamlining", "spearheading", "facilitating". Use plain language: "using", "improving", "leading", "helping".
-- Do NOT list your skills or tools — weave them into the story of what you did.
-- Sound like a real person explaining their work to a peer, not like a resume bullet point.
-- A good test: read each line out loud. If it sounds robotic or rehearsed, rewrite it.
+Format as SHORT PARAGRAPHS (2-4 sentences each), not as single-line bullet points. Each paragraph is one coherent thought or mini-topic the person would say together before pausing. This is how people actually speak — they group related ideas, not list them one per line.
 
-BAD example (robotic, keyword-stuffed):
-- "I lead my QA teams to focus on thorough backend validation alongside UI and API tests to ensure full coverage of data consistency."
-- "Leveraging Agile methodology and tools like Jira, Jenkins, and SQL Developer, I manage and track these validations efficiently while mentoring the team on best practices."
+STYLE RULES:
+- Use natural transitions between paragraphs: "In my recent projects...", "From a Test Lead perspective...", "For example...", "Most of my experience has been in...", "So I believe..."
+- Do NOT map each paragraph to one JD keyword. Group related ideas naturally.
+- Do NOT start every paragraph with "I" — vary openings.
+- Do NOT cram tools, metrics, and buzzwords into every sentence. Mention them where they naturally fit.
+- Do NOT use corporate jargon like "leveraging", "streamlining", "spearheading", "facilitating", "ensuring full coverage". Use plain language.
+- Do NOT end with a neat summary sentence that packages all your skills. Just stop naturally.
+- Sound like a real person explaining their work to a colleague, not like a resume.
+- A good test: read it out loud. If it sounds like a rehearsed elevator pitch, rewrite it.
 
-GOOD example (natural, conversational):
-- "When I test a stored procedure, I first understand what tables it's supposed to read or modify and what the expected business result is."
-- "Then I usually capture the data before execution, run the procedure with different test inputs, and query the affected tables afterward to make sure everything happened correctly."
-- "Another important thing I test is transaction handling — for example, I'll intentionally provide invalid data and verify that the transaction rolls back completely."
+BAD example (scripted, keyword-per-bullet):
+- "Working with Selenium WebDriver paired with Java has been my main approach to automation."
+- "I also make sure my automation fits smoothly into the CI/CD pipeline."
+- "Beyond just writing tests, I've managed small QA teams, mentored juniors, and planned test strategies."
+- "So for a QA Test Lead role like this, I bring a solid foundation in automation, team leadership, and Agile experience."
+
+GOOD example (natural speech, grouped thoughts):
+I have over 13 years of experience in software testing, and over the last several years I've been working extensively on test automation, mainly using Selenium WebDriver with Java.
+
+In my recent projects, I've been responsible not only for developing automation scripts but also for maintaining the framework and making sure the tests are stable and reusable. For example, I use reusable page components, proper synchronization and waits, and common utilities so that we don't end up with a lot of flaky tests.
+
+From a Test Lead perspective, my role goes beyond automation. I've worked on test planning, reviewing coverage, coordinating testing activities within the sprint, tracking defects, and mentoring other QA team members.
+
+Most of my recent domain experience has been in healthcare and e-commerce, but the QA processes are very similar. So I believe that combination of hands-on experience along with QA leadership fits well with this role.
 
 Rules:
 1. Start with a direct, natural answer to the question.
-2. Align to resume and JD but do it subtly — don't announce alignment.
-3. Do not invent unsupported experience. If something is assumed, phrase it as a reasonable way to answer.
-4. Use practical, everyday project language — the way you'd explain it to a colleague.
-5. Mention specific tools and techniques where natural, but don't force them into every sentence.
+2. Align to resume and JD subtly — don't announce alignment.
+3. Do not invent unsupported experience.
+4. Use practical, everyday project language.
+5. Mention specific tools and techniques where natural, but don't force them.
 6. Include real-world context and outcomes when they add value, not as checkbox items.
-7. Keep it conversational: natural, confident, like you're talking to the interviewer across a table.
-8. DOMAIN EXPERTISE: If the company/role is in a specific domain, use domain terminology naturally — don't list it, weave it into your story.
+7. Keep it conversational — like you're talking to the interviewer across a table.
+8. If the role is in a specific domain, weave domain knowledge naturally into your story.
 
 Return in this format:
 # 30-Second Version
-(3-5 bullet points — conversational, as if giving a quick verbal summary)
+(A short 3-4 sentence spoken summary — as if someone asked "give me the quick version")
 
 # Real-Time Example
-(A concrete story from the candidate's experience told naturally. Include what happened, what you did, and what the result was — but tell it like a story, not a checklist.)
+(A concrete story from the candidate's experience told naturally in short paragraphs. What happened, what you did, what the result was — told like a story, not a checklist.)
 
 # Strong Answer
-(The full answer as natural conversational talking points. Each "- " line is one thought you'd speak. Use connectors between points. This should sound like a real person talking.)
+(The full answer written as natural short paragraphs — 2-4 sentences each, grouped by thought. This should read like a transcript of a real person speaking confidently in an interview.)
 
 # Key Points to Mention
 (Short bullet reminders)
@@ -250,7 +259,7 @@ Return in this format:
 (Bullet list)
 
 # Follow-Up Answer Hints
-(Conversational talking points for each follow-up)
+(Short natural paragraphs for each follow-up)
 """
 
 
@@ -345,13 +354,13 @@ Rules:
 7. Sound like a person explaining their work to a peer, not like a resume.
 8. If the role is in a specific domain, weave domain knowledge naturally into the story.
 
-CRITICAL OUTPUT FORMAT — NATURAL CONVERSATIONAL TALKING POINTS:
-Write every answer section as the candidate would ACTUALLY SPEAK — natural, human, conversational.
-- Each line starts with "- " and is ONE thought.
-- Use natural connectors: "So what I did was...", "Then I...", "Another thing I noticed was...", "For example..."
-- Do NOT start every line with "I" — vary sentence openings.
+CRITICAL OUTPUT FORMAT — NATURAL SPOKEN ANSWER:
+Write every answer section as SHORT PARAGRAPHS (2-4 sentences each), not single-line bullets. Each paragraph is one coherent thought the person would say together. This is how people actually speak.
+- Use natural transitions: "In my recent projects...", "For example...", "From a leadership perspective..."
+- Do NOT map each paragraph to one JD keyword.
 - Do NOT cram tools and buzzwords into every sentence.
 - Do NOT use jargon like "leveraging", "streamlining", "spearheading". Use plain language.
+- Do NOT end with a neat summary that packages all skills. Just stop naturally.
 - Sound like a real person, not a keyword-stuffed bot.
 
 Return in this format:
@@ -359,13 +368,13 @@ Return in this format:
 (The clear interview question you identified)
 
 # 30-Second Version
-(3-5 conversational talking points)
+(A short 3-4 sentence spoken summary)
 
 # Real-Time Example
-(A concrete story told naturally — what happened, what you did, what the result was.)
+(A concrete story told naturally in short paragraphs.)
 
 # Strong Answer
-(Full answer as natural conversational talking points. Each "- " line is one spoken thought with natural connectors.)
+(Full answer as natural short paragraphs — 2-4 sentences each, grouped by thought. Should read like a transcript of a real person speaking.)
 
 # Key Points to Mention
 (Short bullet reminders)
@@ -374,7 +383,7 @@ Return in this format:
 (Bullet list)
 
 # Follow-Up Answer Hints
-(Conversational talking points for each follow-up)
+(Short natural paragraphs for each follow-up)
 """
     return responses_stream(
         prompt,
