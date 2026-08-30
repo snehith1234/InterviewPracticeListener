@@ -75,7 +75,7 @@ def generate_answer(role: str, job_description: str, resume_text: str, company_c
     prompt = _build_answer_prompt(role, job_description, resume_text, company_context, additional_context, profile, question, mode)
     return responses_text(
         prompt,
-        system="You are an expert interview answer coach with deep knowledge across technical domains (DevOps, cloud, AI/ML, data science, software engineering) AND business domains (banking, telecom, healthcare, e-commerce, insurance, manufacturing, etc.). Generate strong, truthful, domain-aware candidate answers for practice sessions.",
+        system="You are an expert interview answer coach. Generate answers that sound like a real person talking in an interview — natural, conversational, and confident. Never sound robotic or keyword-stuffed. Use plain language over corporate jargon.",
         api_key=api_key,
         model=model,
         kind="answer",
@@ -112,10 +112,10 @@ Give score out of 10.
 (Bullet list)
 
 # Stronger Version
-(Bullet points — each line is one spoken sentence starting with "- ". Write it as natural talking points the candidate would say out loud, not paragraphs.)
+(Rewrite as natural conversational talking points — each "- " line is one thought the candidate would say out loud. Use natural connectors like "So...", "Then...", "For example...". Sound like a real person, not a keyword-stuffed bot.)
 
 # Short Version to Memorize
-(Bullet points — each line is one spoken sentence starting with "- ". 3-4 key sentences to remember.)
+(3-4 key sentences written naturally — something you could actually memorize and say.)
 
 # Next Follow-Up to Practice
 """
@@ -200,42 +200,48 @@ Interview question:
 Mode:
 {mode}
 
-CRITICAL OUTPUT FORMAT — TALKING POINTS:
-Every section that contains an answer (30-Second Version, Real-Time Example, Strong Answer, Follow-Up Answer Hints) MUST be written as a sequence of individual talking points — one sentence per line, each line starting with a bullet "- ".
-Write each point as a natural sentence the candidate would actually say out loud in an interview. Think of it as scripted speech, not written prose.
-Do NOT write paragraphs or multi-sentence blocks. Each bullet is one standalone spoken sentence.
+CRITICAL OUTPUT FORMAT — NATURAL CONVERSATIONAL TALKING POINTS:
+Write every answer section as the candidate would ACTUALLY SPEAK in a real interview — natural, conversational, human.
+- Each line starts with "- " and is ONE thought the person would say.
+- Use natural connectors between points: "So what I usually do is...", "Then I...", "Another important thing I check is...", "For example, in one case I...", "What that gave us was..."
+- Do NOT start every line with "I" — vary sentence openings naturally.
+- Do NOT cram tools, metrics, and buzzwords into every single sentence. Spread them naturally across the answer.
+- Do NOT use corporate jargon like "leveraging", "streamlining", "spearheading", "facilitating". Use plain language: "using", "improving", "leading", "helping".
+- Do NOT list your skills or tools — weave them into the story of what you did.
+- Sound like a real person explaining their work to a peer, not like a resume bullet point.
+- A good test: read each line out loud. If it sounds robotic or rehearsed, rewrite it.
+
+BAD example (robotic, keyword-stuffed):
+- "I lead my QA teams to focus on thorough backend validation alongside UI and API tests to ensure full coverage of data consistency."
+- "Leveraging Agile methodology and tools like Jira, Jenkins, and SQL Developer, I manage and track these validations efficiently while mentoring the team on best practices."
+
+GOOD example (natural, conversational):
+- "When I test a stored procedure, I first understand what tables it's supposed to read or modify and what the expected business result is."
+- "Then I usually capture the data before execution, run the procedure with different test inputs, and query the affected tables afterward to make sure everything happened correctly."
+- "Another important thing I test is transaction handling — for example, I'll intentionally provide invalid data and verify that the transaction rolls back completely."
 
 Rules:
-1. Start with a direct answer.
-2. Align to resume and JD.
+1. Start with a direct, natural answer to the question.
+2. Align to resume and JD but do it subtly — don't announce alignment.
 3. Do not invent unsupported experience. If something is assumed, phrase it as a reasonable way to answer.
-4. Use practical project language.
-5. Mention specific tools, metric names, commands, or thresholds where relevant — not generic descriptions.
-6. Include production/project context and measurable business impact (time saved, incidents prevented, uptime improved, deployment frequency, etc.).
-7. For senior roles, use Tool + Project + Issue + Action + Result + Impact.
-8. Avoid overly textbook language.
-9. Keep it interview-speak: natural, confident, not too long.
-10. In Real-Time Example, always include: what the situation was, what you specifically did (with tool/command names), and the measurable outcome or impact.
-11. DOMAIN EXPERTISE: If the company/role is in a specific domain (banking, telecom, healthcare, e-commerce, insurance, etc.), weave in domain-specific terminology, regulations, workflows, and concerns naturally. For example:
-    - Banking/Finance: mention PCI-DSS, SOX compliance, transaction integrity, core banking systems, payment gateways, fraud detection, regulatory reporting, settlement cycles.
-    - Telecom: mention OSS/BSS, network provisioning, CDRs, SLA management, 5G/LTE, service assurance, mediation, billing systems.
-    - Healthcare: mention HIPAA, HL7/FHIR, EHR/EMR systems, patient data privacy, clinical workflows.
-    - E-commerce: mention cart abandonment, payment processing, catalog services, peak traffic handling, recommendation engines.
-    - Insurance: mention claims processing, underwriting, actuarial systems, policy administration.
-    Show you understand the business context, not just the tech.
+4. Use practical, everyday project language — the way you'd explain it to a colleague.
+5. Mention specific tools and techniques where natural, but don't force them into every sentence.
+6. Include real-world context and outcomes when they add value, not as checkbox items.
+7. Keep it conversational: natural, confident, like you're talking to the interviewer across a table.
+8. DOMAIN EXPERTISE: If the company/role is in a specific domain, use domain terminology naturally — don't list it, weave it into your story.
 
 Return in this format:
 # 30-Second Version
-(Bullet points — each line is one spoken sentence starting with "- ")
+(3-5 bullet points — conversational, as if giving a quick verbal summary)
 
 # Real-Time Example
-(Bullet points — each line is one spoken sentence starting with "- ". MUST include: specific tools/commands used, the action taken, and the measurable impact — e.g. "reduced deployment time from 45min to 8min", "cut incident response from 30min to under 5min", "achieved 99.9% uptime". If no direct experience, build a realistic scenario with specifics the candidate could credibly claim. Use domain-specific context when applicable.)
+(A concrete story from the candidate's experience told naturally. Include what happened, what you did, and what the result was — but tell it like a story, not a checklist.)
 
 # Strong Answer
-(Bullet points — each line is one spoken sentence starting with "- ". This is the full answer as a sequence of individual talking points the candidate would say.)
+(The full answer as natural conversational talking points. Each "- " line is one thought you'd speak. Use connectors between points. This should sound like a real person talking.)
 
 # Key Points to Mention
-(Bullet list of short reminders)
+(Short bullet reminders)
 
 # Resume/JD Alignment
 (Bullet list)
@@ -244,7 +250,7 @@ Return in this format:
 (Bullet list)
 
 # Follow-Up Answer Hints
-(Bullet points — each line is one spoken sentence starting with "- ")
+(Conversational talking points for each follow-up)
 """
 
 
@@ -253,7 +259,7 @@ def generate_answer_stream(role: str, job_description: str, resume_text: str, co
     prompt = _build_answer_prompt(role, job_description, resume_text, company_context, additional_context, profile, question, mode)
     return responses_stream(
         prompt,
-        system="You are an expert interview answer coach with deep knowledge across technical domains (DevOps, cloud, AI/ML, data science, software engineering) AND business domains (banking, telecom, healthcare, e-commerce, insurance, manufacturing, etc.). Generate strong, truthful, domain-aware candidate answers for practice sessions.",
+        system="You are an expert interview answer coach. Generate answers that sound like a real person talking in an interview — natural, conversational, and confident. Never sound robotic or keyword-stuffed. Use plain language over corporate jargon.",
         api_key=api_key,
         model=model,
         kind="answer",
@@ -331,45 +337,48 @@ Mode:
 
 Rules:
 1. Start by stating the detected question clearly.
-2. Then provide the answer using practical project language aligned to the candidate context.
+2. Then provide the answer the way a real person would speak it — natural, conversational, confident.
 3. Do not invent unsupported experience.
-4. Mention specific tools, metric names, commands, or thresholds — not generic descriptions.
-5. Include production/project context and measurable business impact (time saved, incidents prevented, uptime improved, deployment frequency, etc.).
-6. For senior roles, use Tool + Project + Issue + Action + Result + Impact.
-7. Keep it interview-speak: natural, confident, not too long.
-8. In Real-Time Example, always include: specific tools/commands used, the action taken, and the measurable outcome.
-9. DOMAIN EXPERTISE: If the company/role is in a specific domain, weave in domain-specific terminology, regulations, and business concerns naturally. Show you understand the business, not just the tech.
+4. Use everyday project language, not corporate jargon.
+5. Mention tools and techniques naturally where they fit — don't force them into every sentence.
+6. Include real-world context and outcomes when they add value.
+7. Sound like a person explaining their work to a peer, not like a resume.
+8. If the role is in a specific domain, weave domain knowledge naturally into the story.
 
-CRITICAL OUTPUT FORMAT — TALKING POINTS:
-Every section that contains an answer (30-Second Version, Real-Time Example, Strong Answer, Follow-Up Answer Hints) MUST be written as a sequence of individual talking points — one sentence per line, each line starting with a bullet "- ".
-Write each point as a natural sentence the candidate would actually say out loud in an interview. Think of it as scripted speech, not written prose.
-Do NOT write paragraphs or multi-sentence blocks. Each bullet is one standalone spoken sentence.
+CRITICAL OUTPUT FORMAT — NATURAL CONVERSATIONAL TALKING POINTS:
+Write every answer section as the candidate would ACTUALLY SPEAK — natural, human, conversational.
+- Each line starts with "- " and is ONE thought.
+- Use natural connectors: "So what I did was...", "Then I...", "Another thing I noticed was...", "For example..."
+- Do NOT start every line with "I" — vary sentence openings.
+- Do NOT cram tools and buzzwords into every sentence.
+- Do NOT use jargon like "leveraging", "streamlining", "spearheading". Use plain language.
+- Sound like a real person, not a keyword-stuffed bot.
 
 Return in this format:
 # Detected Question
 (The clear interview question you identified)
 
 # 30-Second Version
-(Bullet points — each line is one spoken sentence starting with "- ")
+(3-5 conversational talking points)
 
 # Real-Time Example
-(Bullet points — each line is one spoken sentence starting with "- ". MUST include: specific tools/commands, the action taken, and measurable impact. Use domain-specific context when applicable.)
+(A concrete story told naturally — what happened, what you did, what the result was.)
 
 # Strong Answer
-(Bullet points — each line is one spoken sentence starting with "- ". Full answer as a sequence of individual talking points.)
+(Full answer as natural conversational talking points. Each "- " line is one spoken thought with natural connectors.)
 
 # Key Points to Mention
-(Bullet list of short reminders)
+(Short bullet reminders)
 
 # Possible Follow-Up Questions
 (Bullet list)
 
 # Follow-Up Answer Hints
-(Bullet points — each line is one spoken sentence starting with "- ")
+(Conversational talking points for each follow-up)
 """
     return responses_stream(
         prompt,
-        system="You are an expert interview answer coach with deep knowledge across technical domains (DevOps, cloud, AI/ML, data science, software engineering, project management, product ownership) AND business domains (banking, telecom, healthcare, e-commerce, insurance, manufacturing). First identify the question from the transcript, then generate a strong, domain-aware practice answer.",
+        system="You are an expert interview answer coach. First identify the question from the transcript, then generate a natural, conversational practice answer. Sound like a real person talking, not a keyword-stuffed bot.",
         api_key=api_key,
         model=model,
         kind="answer",
