@@ -205,36 +205,38 @@ Write the answer as if an experienced professional is speaking live in an interv
 Format as SHORT PARAGRAPHS (2-4 sentences each). Each paragraph is one coherent thought the person would say before pausing. This is how people actually talk.
 
 STYLE RULES:
+- STOP TRYING TO MAXIMIZE KEYWORD COVERAGE. Prioritize believable spoken answers over matching every line of the job description. A real person in an interview does not mention Selenium + REST Assured + SQL + TestNG + Cucumber + Jenkins + Agile + leadership + stakeholders + banking all in one answer.
+- Instead, give ONE OR TWO small concrete examples from actual project work. For example: "In my healthcare projects, I worked on member enrollment and claims processing, where we had to validate not only the UI but also whether the correct data was being updated in the database." That makes the candidate sound like they've actually done the work.
 - Use simple spoken English instead of polished corporate language.
 - Keep answers focused on the exact question being asked.
-- Do NOT try to include every tool, technology, domain, and leadership skill in every answer.
-- Avoid unnecessary phrases such as "I'm confident I can transition effectively," "the fundamentals are universal," "I see a great match," "I've built my career around," "my experience isn't limited to," or similar generic interview statements.
+- Avoid unnecessary phrases such as "I'm confident I can transition effectively," "the fundamentals are universal," "I see a great match," "I've built my career around," "my experience isn't limited to," "Besides my technical skills," or similar generic interview statements.
 - Use shorter sentences and a natural flow, like someone explaining their actual experience.
 - Prefer specific examples of what the candidate did instead of broad claims about skills.
 - It is okay for the answer to sound slightly imperfect or conversational. It should NOT sound memorized.
 - If the candidate has not worked with a particular technology or domain, say that clearly and briefly instead of trying to compensate with a long explanation.
 - Do NOT force job-description keywords into the answer unless they naturally relate to the question.
 - Do NOT name-drop tools from the JD that the candidate has NOT actually used.
+- Do NOT end with a sentence that lists multiple skill categories ("independently or as part of a team and communicating clearly with developers, managers, and business stakeholders"). That sounds pulled from a JD.
 - Keep most answers around 45-90 seconds of speaking time unless the question requires a detailed example.
 - For technical questions, explain the actual approach step by step rather than giving textbook definitions.
 - For leadership questions, focus on what was personally done with the team, decisions made, problems handled, and outcomes.
-- When appropriate, use phrases that people naturally use while speaking: "Usually what I do is...", "In my last project...", "One example would be...", "The first thing I check is...", "We ran into this issue once..."
+- When appropriate, use phrases that people naturally use while speaking: "Usually what I do is...", "In my last project...", "One example would be...", "The first thing I check is...", "We ran into this issue once...", "For example, in my healthcare projects..."
 - Do NOT end every answer with a summary of why the candidate is a good fit for the role. Only connect it back to the role when it naturally makes sense.
 - Most importantly, write the answer as something the candidate could comfortably say aloud in an interview, not as something they would submit in writing.
 
-BAD example (polished, scripted, JD-keyword matching):
-"Although I haven't worked directly in banking, the fundamentals of testing remain quite consistent. I'm confident that my strong foundation in automation, SQL and backend validation, Agile collaboration, and team leadership will allow me to contribute effectively and ramp up quickly in a banking environment. I'm also fully open to learning new tools and processes specific to your environment, whether that's Playwright, Litmus, or Micro Focus Octane."
+BAD example (keyword-stuffed, tries to cover every JD line):
+"I have spent over 13 years in software testing, with a strong focus on automation using Selenium WebDriver for UI and REST Assured for API testing. I'm also skilled in SQL, which helps me validate database results accurately, especially in complex systems like healthcare. Besides my technical skills, I've taken on leadership roles like coordinating testing efforts during sprints, assigning tasks, mentoring junior testers, and facilitating defect triage meetings. I'm confident I can learn domain specifics quickly and apply my automation expertise and team coordination skills to this role. I'm comfortable working independently or as part of a team and communicating clearly with developers, managers, and business stakeholders."
 
-GOOD example (natural, honest, spoken):
-I have over 13 years of experience in software testing, and a large part of my recent work has been focused on automation. I've mainly worked with Selenium WebDriver and Java for UI testing, REST Assured for API automation, and SQL for backend and data validation.
+GOOD example (natural, concrete, sounds like a real person):
+Sure. I have over 13 years of experience in software testing. A major part of my work has been automation, mainly using Selenium WebDriver with Java for UI testing and REST Assured for API testing. I also use SQL quite a bit for backend validation.
 
-In my projects, I've been involved throughout the testing lifecycle. I work with the team to understand requirements, identify the important test scenarios, prepare the test approach, execute testing, track defects, and support release validation. I've also integrated automation suites with Jenkins so that regression tests can run as part of the CI/CD process and give the team faster feedback.
+For example, in my healthcare projects, I've worked on workflows like member enrollment and claims processing, where we had to validate not only what was happening on the UI, but also whether the correct data was being updated in the database.
 
-Along with the hands-on testing, I've also taken on team responsibilities. I've coordinated testing activities during sprints, reviewed test cases and automation scripts, helped with defect triage, and mentored junior QA engineers when they needed support.
+In my recent roles, I've been involved from the requirements stage through release. I work with product owners and developers to understand the requirements, identify the test scenarios, decide what should be automated, and then manage the execution and defects. We also integrated our automation with Jenkins so the regression suite could run with new builds.
 
-Most of my domain experience has been in healthcare, so I'm used to working with complex workflows and data that needs to be validated very carefully. I haven't worked directly in banking, so that would be a new domain for me, but I'm comfortable learning new business processes and understanding how the application works.
+I've also been taking more of a lead role — coordinating work within the QA team, reviewing test cases, helping junior testers, and working with developers during defect triage when we have issues blocking a release.
 
-For this Test Lead role, I think my combination of hands-on automation experience and experience coordinating QA activities would allow me to contribute both technically and from a team leadership perspective.
+My background is mostly healthcare rather than banking, so banking would be a new domain for me. But I'm used to applications with complex business rules and a lot of backend data validation, so I would approach it the same way — first understand the business flow and then build the right test coverage around it.
 
 Return in this format:
 # 30-Second Version
@@ -350,14 +352,14 @@ Rules:
 
 CRITICAL OUTPUT FORMAT — NATURAL SPOKEN ANSWER:
 Write every answer section as SHORT PARAGRAPHS (2-4 sentences each). Each paragraph is one coherent thought the person would say together.
+- STOP TRYING TO MAXIMIZE KEYWORD COVERAGE. Prioritize believable spoken answers over matching every line of the job description. Give one or two small concrete examples from actual work instead of listing every tool and skill.
 - Use simple spoken English instead of polished corporate language.
 - Keep answers focused on the exact question being asked.
-- Do NOT try to include every tool, technology, domain, and leadership skill in every answer.
-- Avoid phrases like "I'm confident I can transition effectively," "the fundamentals are universal," "I see a great match."
+- Avoid phrases like "I'm confident I can transition effectively," "the fundamentals are universal," "I see a great match," "Besides my technical skills."
 - Use shorter sentences and natural flow. Prefer specific examples over broad claims.
-- Use natural spoken phrases: "Usually what I do is...", "In my last project...", "One example would be...", "The first thing I check is..."
+- Use natural spoken phrases: "Usually what I do is...", "In my last project...", "One example would be...", "The first thing I check is...", "For example, in my healthcare projects..."
 - Do NOT end with a summary of why the candidate is a good fit. Only connect back to the role when natural.
-- Do NOT name-drop tools the candidate hasn't used.
+- Do NOT name-drop tools the candidate hasn't used. Do NOT end with a sentence listing multiple skill categories.
 - Be honest about gaps — say them plainly.
 - Write something the candidate could comfortably say aloud, not submit in writing.
 
