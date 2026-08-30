@@ -209,7 +209,9 @@ STYLE RULES:
 - Instead, give ONE OR TWO small concrete examples from actual project work. For example: "In my healthcare projects, I worked on member enrollment and claims processing, where we had to validate not only the UI but also whether the correct data was being updated in the database." That makes the candidate sound like they've actually done the work.
 - Use simple spoken English instead of polished corporate language.
 - Keep answers focused on the exact question being asked.
-- Avoid unnecessary phrases such as "I'm confident I can transition effectively," "the fundamentals are universal," "I see a great match," "I've built my career around," "my experience isn't limited to," "Besides my technical skills," "One key part of my work is," "This approach caught," "has prepared me well," "I want to be clear that," or similar generic interview statements. Also avoid overly formal words like "triage," "facilitating," "ensuring" — use simpler alternatives like "working through issues," "helping with," "making sure."
+- Avoid unnecessary phrases such as "I'm confident I can transition effectively," "the fundamentals are universal," "I see a great match," "I've built my career around," "my experience isn't limited to," "Besides my technical skills," "One key part of my work is," "This approach caught," "has prepared me well," "I want to be clear that," "I'm confident that with some ramp-up," or similar generic interview statements. Also avoid overly formal words like "triage," "facilitating," "ensuring" — use simpler alternatives like "working through issues," "helping with," "making sure."
+- Do NOT add narrated outcome statements like "This helped catch several data issues early" or "which helped speed up our release cycles." Real people in interviews don't narrate the impact of every action. Only mention an outcome if it was a specific, memorable event the candidate could describe in detail if asked.
+- Do NOT add specific details the candidate might not be able to back up in follow-ups. For example, don't say "multiple databases" unless the resume or context confirms that. Specific details are only strong when the candidate can comfortably answer follow-up questions about them.
 - Use shorter sentences and a natural flow, like someone explaining their actual experience.
 - Prefer specific examples of what the candidate did instead of broad claims about skills.
 - It is okay for the answer to sound slightly imperfect or conversational. It should NOT sound memorized.
@@ -224,17 +226,17 @@ STYLE RULES:
 - Do NOT end every answer with a summary of why the candidate is a good fit for the role. Only connect it back to the role when it naturally makes sense.
 - Most importantly, write the answer as something the candidate could comfortably say aloud in an interview, not as something they would submit in writing.
 
-BAD example (keyword-stuffed, tries to cover every JD line):
-"I have spent over 13 years in software testing, with a strong focus on automation using Selenium WebDriver for UI and REST Assured for API testing. I'm also skilled in SQL, which helps me validate database results accurately, especially in complex systems like healthcare. Besides my technical skills, I've taken on leadership roles like coordinating testing efforts during sprints, assigning tasks, mentoring junior testers, and facilitating defect triage meetings. I'm confident I can learn domain specifics quickly and apply my automation expertise and team coordination skills to this role. I'm comfortable working independently or as part of a team and communicating clearly with developers, managers, and business stakeholders."
+BAD example (keyword-stuffed, narrated outcomes, selling language):
+"I verified backend changes to make sure that transactions were correctly recorded in multiple databases. This helped catch several data issues early. We integrated automation with Jenkins to trigger tests automatically during CI/CD, which helped speed up our release cycles. I'm confident that with some ramp-up, my skills in automation, SQL, managing teams, and Agile environments will let me contribute effectively in this role."
 
 GOOD example (natural, concrete, sounds like a real person):
-Sure. I have over 13 years of experience in software testing, and more than five years of that has been focused on automation. I've mainly worked with Selenium WebDriver for UI testing, REST Assured for API testing, and SQL for backend validation.
+Sure. I have more than 13 years of experience in software testing, and over the last five years I've been working more heavily on automation. I mainly use Selenium WebDriver for UI testing, REST Assured for API testing, and SQL for checking backend data.
 
-In my healthcare projects, I worked on areas like member enrollment and claims processing. So when I test a workflow, I don't just check what happens on the screen. I also verify the database to make sure the right records are created or updated.
+Most of my experience is in healthcare projects, especially areas like member enrollment and claims processing. In those applications, I usually don't stop with checking the screen. I also go to the database and verify that the right records were created or updated correctly.
 
-I've also taken on more lead responsibilities over time. I've worked with small QA teams, reviewed automation scripts, helped divide the testing work, and worked with developers when we found important issues. We also integrated our automation with Jenkins so the tests could run automatically with new builds.
+Over time, I've also taken on more team responsibilities. I've coordinated testing work for small teams, reviewed automation scripts, helped assign work, and worked with developers when we found important issues. We also used Jenkins to run our automation whenever new builds were available.
 
-Most of my experience is in healthcare, so banking would be a new domain for me. But I'm used to applications with detailed business rules, a lot of data validation, and complex workflows. I'm comfortable learning the business side and applying the testing experience I already have.
+I haven't worked directly in banking, so I would need to learn the specific business flows. But I'm already used to applications with complex rules and a lot of data validation, and I'm comfortable learning a new domain while continuing to contribute on the testing and automation side.
 
 Return in this format:
 # 30-Second Version
