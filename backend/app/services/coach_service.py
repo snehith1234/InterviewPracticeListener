@@ -75,7 +75,7 @@ def generate_answer(role: str, job_description: str, resume_text: str, company_c
     prompt = _build_answer_prompt(role, job_description, resume_text, company_context, additional_context, profile, question, mode)
     return responses_text(
         prompt,
-        system="You are an expert interview answer coach. Generate answers that sound like a real person talking in an interview — natural, conversational, and confident. Never sound robotic or keyword-stuffed. Use plain language over corporate jargon.",
+        system="You generate interview answers that sound like a real person speaking naturally. Use simple spoken English. Never sound like AI output or a job description. Prefer specific examples over broad claims.",
         api_key=api_key,
         model=model,
         kind="answer",
@@ -121,7 +121,7 @@ Give score out of 10.
 """
     return responses_text(
         prompt,
-        system="You are a technical interview coach. Give practical feedback and a better answer.",
+        system="You are a technical interview coach. Give practical feedback. When rewriting answers, write them as natural spoken English — something the candidate could say aloud in an interview, not polished written text.",
         api_key=api_key,
         model=model,
         kind="answer",
@@ -201,45 +201,40 @@ Mode:
 {mode}
 
 CRITICAL OUTPUT FORMAT — NATURAL SPOKEN ANSWER:
-Write every answer section as the candidate would ACTUALLY SPEAK in a real interview — natural, conversational, human.
-Format as SHORT PARAGRAPHS (2-4 sentences each), not as single-line bullet points. Each paragraph is one coherent thought or mini-topic the person would say together before pausing. This is how people actually speak — they group related ideas, not list them one per line.
+Write the answer as if an experienced professional is speaking live in an interview. It must sound natural and conversational — not like it was written by AI or copied from a job description.
+Format as SHORT PARAGRAPHS (2-4 sentences each). Each paragraph is one coherent thought the person would say before pausing. This is how people actually talk.
 
 STYLE RULES:
-- Use natural transitions between paragraphs: "In my recent roles...", "Over the last few years...", "For example...", "Most of my experience has been in...", "So I see this as..."
-- Do NOT map each paragraph to one JD keyword. Group related ideas naturally.
-- Do NOT start every paragraph with "I" — vary openings.
-- Do NOT cram tools, metrics, and buzzwords into every sentence. Mention them where they naturally fit.
-- Do NOT use corporate jargon like "leveraging", "streamlining", "spearheading", "facilitating", "ensuring full coverage", "contribute effectively", "ramp up quickly", "remain quite consistent". Use plain, honest language.
-- Do NOT end with a polished summary sentence that neatly packages all your skills ("I bring automation, leadership, and Agile experience"). Just close naturally the way a person would stop talking.
-- Do NOT name-drop tools from the JD that the candidate has NOT actually used. If the candidate hasn't used a tool, don't mention it or say "I'm open to learning new tools" without listing them.
-- Do NOT use filler phrases that sound impressive but say nothing: "the fundamentals remain consistent", "I'm confident I can contribute", "excited about bringing my experience". Be specific or skip it.
-- Be HONEST about gaps. If the candidate lacks domain experience, say it plainly: "I haven't worked extensively in banking, so there would be some domain knowledge for me to pick up" — not "the fundamentals of testing remain quite consistent across domains."
-- Sound like a real person explaining their work to a colleague, not like a resume or a rehearsed pitch.
-- A good test: read it out loud. If any sentence sounds like it was written to impress rather than to communicate, rewrite it in plain language.
+- Use simple spoken English instead of polished corporate language.
+- Keep answers focused on the exact question being asked.
+- Do NOT try to include every tool, technology, domain, and leadership skill in every answer.
+- Avoid unnecessary phrases such as "I'm confident I can transition effectively," "the fundamentals are universal," "I see a great match," "I've built my career around," "my experience isn't limited to," or similar generic interview statements.
+- Use shorter sentences and a natural flow, like someone explaining their actual experience.
+- Prefer specific examples of what the candidate did instead of broad claims about skills.
+- It is okay for the answer to sound slightly imperfect or conversational. It should NOT sound memorized.
+- If the candidate has not worked with a particular technology or domain, say that clearly and briefly instead of trying to compensate with a long explanation.
+- Do NOT force job-description keywords into the answer unless they naturally relate to the question.
+- Do NOT name-drop tools from the JD that the candidate has NOT actually used.
+- Keep most answers around 45-90 seconds of speaking time unless the question requires a detailed example.
+- For technical questions, explain the actual approach step by step rather than giving textbook definitions.
+- For leadership questions, focus on what was personally done with the team, decisions made, problems handled, and outcomes.
+- When appropriate, use phrases that people naturally use while speaking: "Usually what I do is...", "In my last project...", "One example would be...", "The first thing I check is...", "We ran into this issue once..."
+- Do NOT end every answer with a summary of why the candidate is a good fit for the role. Only connect it back to the role when it naturally makes sense.
+- Most importantly, write the answer as something the candidate could comfortably say aloud in an interview, not as something they would submit in writing.
 
-BAD example (scripted, polished, JD-keyword matching):
+BAD example (polished, scripted, JD-keyword matching):
 "Although I haven't worked directly in banking, the fundamentals of testing remain quite consistent. I'm confident that my strong foundation in automation, SQL and backend validation, Agile collaboration, and team leadership will allow me to contribute effectively and ramp up quickly in a banking environment. I'm also fully open to learning new tools and processes specific to your environment, whether that's Playwright, Litmus, or Micro Focus Octane."
 
-GOOD example (natural, honest, plain-spoken):
-I have over 13 years of experience in software testing, and automation has been a major part of my work. I've mainly used Selenium WebDriver for UI automation and REST Assured for API testing, along with SQL for backend and data validation.
+GOOD example (natural, honest, spoken):
+I have over 13 years of experience in software testing, and a large part of my recent work has been focused on automation. I've mainly worked with Selenium WebDriver and Java for UI testing, REST Assured for API automation, and SQL for backend and data validation.
 
-In my recent roles, I've been involved in the complete testing cycle — from understanding requirements and preparing the test approach to execution, defect tracking, regression testing, and release validation. I've also worked with Jenkins and Azure DevOps to integrate automation into CI/CD pipelines so that we can catch issues earlier in the development cycle.
+In my projects, I've been involved throughout the testing lifecycle. I work with the team to understand requirements, identify the important test scenarios, prepare the test approach, execute testing, track defects, and support release validation. I've also integrated automation suites with Jenkins so that regression tests can run as part of the CI/CD process and give the team faster feedback.
 
-Over the last few years, I've also taken on more of a leadership role. I've coordinated testing activities within Agile sprints, reviewed test cases and automation scripts, helped prioritize testing based on risk, and supported junior team members whenever they had technical or functional issues.
+Along with the hands-on testing, I've also taken on team responsibilities. I've coordinated testing activities during sprints, reviewed test cases and automation scripts, helped with defect triage, and mentored junior QA engineers when they needed support.
 
-Most of my domain experience has been in healthcare and e-commerce. I haven't worked extensively in banking, so there would definitely be some domain knowledge for me to pick up, but I'm very comfortable working with complex business workflows, backend validation, and data-intensive applications.
+Most of my domain experience has been in healthcare, so I'm used to working with complex workflows and data that needs to be validated very carefully. I haven't worked directly in banking, so that would be a new domain for me, but I'm comfortable learning new business processes and understanding how the application works.
 
-So I see this Test Lead role as a good fit because I can bring both hands-on automation experience and the ability to coordinate and guide a QA team, while also learning the specific tools and banking processes used here.
-
-Rules:
-1. Start with a direct, natural answer to the question.
-2. Align to resume and JD subtly — don't announce alignment.
-3. Do not invent unsupported experience.
-4. Use practical, everyday project language.
-5. Mention specific tools and techniques where natural, but don't force them.
-6. Include real-world context and outcomes when they add value, not as checkbox items.
-7. Keep it conversational — like you're talking to the interviewer across a table.
-8. If the role is in a specific domain, weave domain knowledge naturally into your story.
+For this Test Lead role, I think my combination of hands-on automation experience and experience coordinating QA activities would allow me to contribute both technically and from a team leadership perspective.
 
 Return in this format:
 # 30-Second Version
@@ -270,7 +265,7 @@ def generate_answer_stream(role: str, job_description: str, resume_text: str, co
     prompt = _build_answer_prompt(role, job_description, resume_text, company_context, additional_context, profile, question, mode)
     return responses_stream(
         prompt,
-        system="You are an expert interview answer coach. Generate answers that sound like a real person talking in an interview — natural, conversational, and confident. Never sound robotic or keyword-stuffed. Use plain language over corporate jargon.",
+        system="You generate interview answers that sound like a real person speaking naturally. Use simple spoken English. Never sound like AI output or a job description. Prefer specific examples over broad claims.",
         api_key=api_key,
         model=model,
         kind="answer",
@@ -348,25 +343,23 @@ Mode:
 
 Rules:
 1. Start by stating the detected question clearly.
-2. Then provide the answer the way a real person would speak it — natural, conversational, confident.
+2. Then provide the answer as natural spoken English — like an experienced professional talking live in an interview.
 3. Do not invent unsupported experience.
-4. Use everyday project language, not corporate jargon.
-5. Mention tools and techniques naturally where they fit — don't force them into every sentence.
-6. Include real-world context and outcomes when they add value.
-7. Sound like a person explaining their work to a peer, not like a resume.
-8. If the role is in a specific domain, weave domain knowledge naturally into the story.
+4. If the candidate hasn't worked with a technology or domain, say that clearly and briefly.
+5. Do not force JD keywords into the answer unless they naturally relate to the question.
 
 CRITICAL OUTPUT FORMAT — NATURAL SPOKEN ANSWER:
-Write every answer section as SHORT PARAGRAPHS (2-4 sentences each), not single-line bullets. Each paragraph is one coherent thought the person would say together. This is how people actually speak.
-- Use natural transitions: "In my recent roles...", "Over the last few years...", "For example...", "Most of my experience has been in..."
-- Do NOT map each paragraph to one JD keyword.
-- Do NOT cram tools and buzzwords into every sentence.
-- Do NOT use jargon like "leveraging", "streamlining", "spearheading", "contribute effectively", "ramp up quickly". Use plain language.
-- Do NOT end with a polished summary that neatly packages all skills. Just close naturally.
-- Do NOT name-drop tools from the JD that the candidate hasn't actually used.
-- Do NOT use filler phrases that sound impressive but say nothing. Be specific or skip it.
-- Be HONEST about gaps — say them plainly, don't polish them into strengths.
-- Sound like a real person, not a keyword-stuffed bot or a rehearsed pitch.
+Write every answer section as SHORT PARAGRAPHS (2-4 sentences each). Each paragraph is one coherent thought the person would say together.
+- Use simple spoken English instead of polished corporate language.
+- Keep answers focused on the exact question being asked.
+- Do NOT try to include every tool, technology, domain, and leadership skill in every answer.
+- Avoid phrases like "I'm confident I can transition effectively," "the fundamentals are universal," "I see a great match."
+- Use shorter sentences and natural flow. Prefer specific examples over broad claims.
+- Use natural spoken phrases: "Usually what I do is...", "In my last project...", "One example would be...", "The first thing I check is..."
+- Do NOT end with a summary of why the candidate is a good fit. Only connect back to the role when natural.
+- Do NOT name-drop tools the candidate hasn't used.
+- Be honest about gaps — say them plainly.
+- Write something the candidate could comfortably say aloud, not submit in writing.
 
 Return in this format:
 # Detected Question
@@ -392,7 +385,7 @@ Return in this format:
 """
     return responses_stream(
         prompt,
-        system="You are an expert interview answer coach. First identify the question from the transcript, then generate a natural, conversational practice answer. Sound like a real person talking, not a keyword-stuffed bot.",
+        system="First identify the question from the transcript, then generate a natural spoken answer. Use simple English. Sound like a real person, not AI output. Prefer specific examples over broad claims.",
         api_key=api_key,
         model=model,
         kind="answer",
