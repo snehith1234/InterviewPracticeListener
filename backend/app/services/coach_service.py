@@ -112,10 +112,10 @@ Give score out of 10.
 (Bullet list)
 
 # Stronger Version
-(Rewrite as natural short paragraphs — 2-4 sentences each, grouped by thought. Should sound like a real person talking in an interview, not a keyword-stuffed script. Use natural transitions between paragraphs.)
+(One sentence per line, each starting with "- ". Natural spoken sentences — something the candidate could say aloud. Do not shorten or rewrite the content, just display each sentence on its own line.)
 
 # Short Version to Memorize
-(3-4 sentences written naturally — something you could actually say from memory.)
+(One sentence per line, each starting with "- ". 3-4 key sentences written naturally.)
 
 # Next Follow-Up to Practice
 """
@@ -202,7 +202,25 @@ Mode:
 
 CRITICAL OUTPUT FORMAT — NATURAL SPOKEN ANSWER:
 Write the answer as if an experienced professional is speaking live in an interview. It must sound natural and conversational — not like it was written by AI or copied from a job description.
-Format as SHORT PARAGRAPHS (2-4 sentences each). Each paragraph is one coherent thought the person would say before pausing. This is how people actually talk.
+
+DISPLAY FORMAT — ONE SENTENCE PER POINT:
+Do NOT display answers as paragraphs. Break every answer into short, easy-to-read points.
+Each point must:
+- Contain one complete sentence or one clear thought.
+- End with a full stop.
+- Appear on a separate line, starting with "- ".
+- Keep the natural spoken flow of the answer.
+- NOT shorten or rewrite the answer just for formatting.
+
+For example, instead of:
+"Sure. I have over 13 years of experience in software testing, and for about the last seven years I've been working mainly on automation. Most of my recent experience has been in healthcare."
+
+Display as:
+- Sure.
+- I have over 13 years of experience in software testing, and for about the last seven years I've been working mainly on automation using Selenium WebDriver with Java.
+- Most of my recent experience has been in healthcare, working on applications related to member enrollment and claims processing.
+
+Apply this sentence-by-sentence point format to every answer section (30-Second Version, Real-Time Example, Strong Answer, Follow-Up Answer Hints).
 
 STYLE RULES:
 - STOP TRYING TO MAXIMIZE KEYWORD COVERAGE. Prioritize believable spoken answers over matching every line of the job description. A real person in an interview does not mention Selenium + REST Assured + SQL + TestNG + Cucumber + Jenkins + Agile + leadership + stakeholders + banking all in one answer.
@@ -231,26 +249,29 @@ STYLE RULES:
 BAD example (domain bridging, narrated outcomes, unverifiable claims):
 "I write SQL queries to verify that the data is correctly inserted or updated in the backend, which is critical in healthcare and would be just as important in banking. This helped reduce manual testing effort and catch defects faster. I assigned tasks to team members based on their strengths. I understand that accuracy and data integrity are crucial in this domain. I'm comfortable applying the solid automation and leadership experience I have to deliver good quality results."
 
-GOOD example (natural, concrete, no bridging or selling):
-Sure. I have over 13 years of experience in software testing, and for about the last seven years I've been working mainly on automation using Selenium WebDriver with Java. Most of my recent experience has been in healthcare, working on applications related to member enrollment and claims processing.
-
-When I automate a workflow, I usually don't stop with checking the UI. I also use SQL to verify what happened in the backend. For example, in one claims project, I automated the process of submitting a claim through the application and then checked the database to make sure the claim record and status were updated correctly.
-
-We also ran our automation through Jenkins whenever we received a new build, so we could identify failures without waiting for everything to be tested manually.
-
-Over time, I also started handling more lead responsibilities. I worked with a small QA team, divided the testing work, reviewed automation scripts, and helped team members when they had issues with their tests or environments. I was also involved in sprint planning and daily meetings with the development team.
-
-I haven't worked directly in banking, so I would need to learn the specific business flows. But I'm already used to applications where data accuracy and careful testing are very important, and I'm comfortable learning a new domain.
+GOOD example (natural, concrete, sentence-per-point format):
+- Sure.
+- I have over 13 years of experience in software testing, and for about the last seven years I've been working mainly on automation using Selenium WebDriver with Java.
+- Most of my recent experience has been in healthcare, working on applications related to member enrollment and claims processing.
+- When I automate a workflow, I usually don't stop with checking the UI.
+- I also use SQL to verify what happened in the backend.
+- For example, in one claims project, I automated the process of submitting a claim through the application and then checked the database to make sure the claim record and status were updated correctly.
+- We also ran our automation through Jenkins whenever we received a new build, so we could identify failures without waiting for everything to be tested manually.
+- Over time, I also started handling more lead responsibilities.
+- I worked with a small QA team, divided the testing work, reviewed automation scripts, and helped team members when they had issues with their tests or environments.
+- I was also involved in sprint planning and daily meetings with the development team.
+- I haven't worked directly in banking, so I would need to learn the specific business flows.
+- But I'm already used to applications where data accuracy and careful testing are very important, and I'm comfortable learning a new domain.
 
 Return in this format:
 # 30-Second Version
-(A short 3-4 sentence spoken summary — as if someone asked "give me the quick version")
+(One sentence per line, each starting with "- ". A quick 3-5 sentence spoken summary.)
 
 # Real-Time Example
-(A concrete story from the candidate's experience told naturally in short paragraphs. What happened, what you did, what the result was — told like a story, not a checklist.)
+(One sentence per line, each starting with "- ". A concrete story from the candidate's experience told naturally.)
 
 # Strong Answer
-(The full answer written as natural short paragraphs — 2-4 sentences each, grouped by thought. This should read like a transcript of a real person speaking confidently in an interview.)
+(One sentence per line, each starting with "- ". The full answer as natural spoken sentences. Keep the conversational flow — do not shorten or rewrite just for formatting.)
 
 # Key Points to Mention
 (Short bullet reminders)
@@ -262,7 +283,7 @@ Return in this format:
 (Bullet list)
 
 # Follow-Up Answer Hints
-(Short natural paragraphs for each follow-up)
+(One sentence per line, each starting with "- ". Natural spoken sentences for each follow-up.)
 """
 
 
@@ -355,7 +376,7 @@ Rules:
 5. Do not force JD keywords into the answer unless they naturally relate to the question.
 
 CRITICAL OUTPUT FORMAT — NATURAL SPOKEN ANSWER:
-Write every answer section as SHORT PARAGRAPHS (2-4 sentences each). Each paragraph is one coherent thought the person would say together.
+Display every answer as ONE SENTENCE PER POINT — each line starts with "- ", contains one complete thought, and ends with a full stop. Do NOT write paragraphs. Keep the natural spoken flow.
 - STOP TRYING TO MAXIMIZE KEYWORD COVERAGE. Prioritize believable spoken answers over matching every line of the job description. Give one or two small concrete examples from actual work instead of listing every tool and skill.
 - Use simple spoken English instead of polished corporate language.
 - Keep answers focused on the exact question being asked.
@@ -364,6 +385,7 @@ Write every answer section as SHORT PARAGRAPHS (2-4 sentences each). Each paragr
 - Use natural spoken phrases: "Usually what I do is...", "In my last project...", "One example would be...", "The first thing I check is...", "For example, in my healthcare projects..."
 - Do NOT end with a summary of why the candidate is a good fit. Only connect back to the role when natural.
 - Do NOT name-drop tools the candidate hasn't used. Do NOT end with a sentence listing multiple skill categories.
+- Do NOT bridge domains mid-answer. If there's a domain gap, state it simply at the end.
 - Be honest about gaps — say them plainly.
 - Write something the candidate could comfortably say aloud, not submit in writing.
 
@@ -372,13 +394,13 @@ Return in this format:
 (The clear interview question you identified)
 
 # 30-Second Version
-(A short 3-4 sentence spoken summary)
+(One sentence per line, each starting with "- ". Quick 3-5 sentence spoken summary.)
 
 # Real-Time Example
-(A concrete story told naturally in short paragraphs.)
+(One sentence per line, each starting with "- ". A concrete story told naturally.)
 
 # Strong Answer
-(Full answer as natural short paragraphs — 2-4 sentences each, grouped by thought. Should read like a transcript of a real person speaking.)
+(One sentence per line, each starting with "- ". Full answer as natural spoken sentences.)
 
 # Key Points to Mention
 (Short bullet reminders)
@@ -387,7 +409,7 @@ Return in this format:
 (Bullet list)
 
 # Follow-Up Answer Hints
-(Short natural paragraphs for each follow-up)
+(One sentence per line, each starting with "- ".)
 """
     return responses_stream(
         prompt,
