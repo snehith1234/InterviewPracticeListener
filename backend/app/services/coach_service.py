@@ -422,34 +422,26 @@ Return in this format:
 
 def quick_short_answer_stream(role: str, job_description: str, resume_text: str, company_context: str, additional_context: str, profile: dict, transcript: str, api_key: str | None, model: str | None) -> Generator[str, None, None]:
     """Ultra-fast first response: detect question + give ONLY a 2-sentence answer. Streams immediately."""
-    additional_hint = ""
-    if additional_context and additional_context.strip():
-        additional_hint = f" Candidate's additional context: {additional_context[:3000]}."
     if profile and profile.get("candidate_summary"):
-        context_block = f"Profile: {profile.get('candidate_summary', '')}. Skills: {', '.join(profile.get('key_skills', [])[:8])}. Style: {profile.get('answer_style_guidance', '')}.{additional_hint}"
+        context_block = f"Profile: {profile.get('candidate_summary', '')}. Skills: {', '.join(profile.get('key_skills', [])[:5])}."
     else:
-        context_block = f"Role: {role}. Key JD: {job_description[:2000]}. Resume highlights: {resume_text[:2000]}.{additional_hint}"
+        context_block = f"Role: {role}. Resume: {resume_text[:800]}."
 
-    prompt = f"""
-From this transcript, identify the interview question and give a SHORT 2-3 sentence answer the candidate can say immediately.
-
-Note: Transcript is from voice recognition — interpret garbled terms using domain context (e.g., "our apps" = "rApps", "ex app" = "xApp", "oh ran" = "O-RAN", "terrace form" = "Terraform", "cube control" = "kubectl", "doctor" = "Docker" in DevOps).
+    prompt = f"""Question from transcript, then 2-sentence answer.
 
 Context: {context_block}
 
-Transcript: {transcript[-3000:]}
+Transcript: {transcript[-1500:]}
 
-Reply in EXACTLY this format (nothing else):
-**Q:** [the detected question — use correct technical terms even if transcript garbled them]
-
-**Quick Answer:**
-
-[2-3 sentence answer they can start speaking right now]
+Reply ONLY:
+**Q:** [question]
+**A:** [2 sentences max]
 """
     return responses_stream(
         prompt,
-        system="You give ultra-short interview answers. Be direct, no fluff. 2-3 sentences max.",
+        system="Ultra-short interview answers. 2 sentences max. No fluff.",
         api_key=api_key,
         model=model,
-        kind="answer",
+        kind="quick",
+        max_output_tokens=150,
     )

@@ -5,7 +5,7 @@ import './style.css';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
 const MODEL_OPTIONS = ['gpt-4o-mini', 'gpt-4o', 'gpt-4.1-mini', 'gpt-4.1', 'gpt-5.4-mini', 'gpt-5.4', 'gpt-5.5'];
-const SILENCE_TIMEOUT_MS = 2500; // Auto-trigger after 2.5s of silence
+const SILENCE_TIMEOUT_MS = 2000; // Auto-trigger after 2s of silence
 
 function App() {
   const [apiKey, setApiKey] = useState('');

@@ -64,7 +64,7 @@ def responses_text(prompt: str, system: str, api_key: Optional[str] = None, mode
     return resp.output_text
 
 
-def responses_stream(prompt: str, system: str, api_key: Optional[str] = None, model: Optional[str] = None, kind: str = "answer") -> Generator[str, None, None]:
+def responses_stream(prompt: str, system: str, api_key: Optional[str] = None, model: Optional[str] = None, kind: str = "answer", max_output_tokens: Optional[int] = None) -> Generator[str, None, None]:
     """Stream response tokens as a generator. Falls back to mock if no key."""
     key = resolve_api_key(api_key)
     if not key:
@@ -75,7 +75,7 @@ def responses_stream(prompt: str, system: str, api_key: Optional[str] = None, mo
         return
     selected_model = model or DEFAULT_MODEL
     client = _client(key)
-    stream = client.responses.create(
+    create_kwargs = dict(
         model=selected_model,
         input=[
             {"role": "system", "content": system},
@@ -83,6 +83,9 @@ def responses_stream(prompt: str, system: str, api_key: Optional[str] = None, mo
         ],
         stream=True,
     )
+    if max_output_tokens:
+        create_kwargs["max_output_tokens"] = max_output_tokens
+    stream = client.responses.create(**create_kwargs)
     for event in stream:
         if event.type == "response.output_text.delta":
             yield event.delta
