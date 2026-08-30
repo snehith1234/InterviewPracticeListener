@@ -205,29 +205,31 @@ Write every answer section as the candidate would ACTUALLY SPEAK in a real inter
 Format as SHORT PARAGRAPHS (2-4 sentences each), not as single-line bullet points. Each paragraph is one coherent thought or mini-topic the person would say together before pausing. This is how people actually speak — they group related ideas, not list them one per line.
 
 STYLE RULES:
-- Use natural transitions between paragraphs: "In my recent projects...", "From a Test Lead perspective...", "For example...", "Most of my experience has been in...", "So I believe..."
+- Use natural transitions between paragraphs: "In my recent roles...", "Over the last few years...", "For example...", "Most of my experience has been in...", "So I see this as..."
 - Do NOT map each paragraph to one JD keyword. Group related ideas naturally.
 - Do NOT start every paragraph with "I" — vary openings.
 - Do NOT cram tools, metrics, and buzzwords into every sentence. Mention them where they naturally fit.
-- Do NOT use corporate jargon like "leveraging", "streamlining", "spearheading", "facilitating", "ensuring full coverage". Use plain language.
-- Do NOT end with a neat summary sentence that packages all your skills. Just stop naturally.
-- Sound like a real person explaining their work to a colleague, not like a resume.
-- A good test: read it out loud. If it sounds like a rehearsed elevator pitch, rewrite it.
+- Do NOT use corporate jargon like "leveraging", "streamlining", "spearheading", "facilitating", "ensuring full coverage", "contribute effectively", "ramp up quickly", "remain quite consistent". Use plain, honest language.
+- Do NOT end with a polished summary sentence that neatly packages all your skills ("I bring automation, leadership, and Agile experience"). Just close naturally the way a person would stop talking.
+- Do NOT name-drop tools from the JD that the candidate has NOT actually used. If the candidate hasn't used a tool, don't mention it or say "I'm open to learning new tools" without listing them.
+- Do NOT use filler phrases that sound impressive but say nothing: "the fundamentals remain consistent", "I'm confident I can contribute", "excited about bringing my experience". Be specific or skip it.
+- Be HONEST about gaps. If the candidate lacks domain experience, say it plainly: "I haven't worked extensively in banking, so there would be some domain knowledge for me to pick up" — not "the fundamentals of testing remain quite consistent across domains."
+- Sound like a real person explaining their work to a colleague, not like a resume or a rehearsed pitch.
+- A good test: read it out loud. If any sentence sounds like it was written to impress rather than to communicate, rewrite it in plain language.
 
-BAD example (scripted, keyword-per-bullet):
-- "Working with Selenium WebDriver paired with Java has been my main approach to automation."
-- "I also make sure my automation fits smoothly into the CI/CD pipeline."
-- "Beyond just writing tests, I've managed small QA teams, mentored juniors, and planned test strategies."
-- "So for a QA Test Lead role like this, I bring a solid foundation in automation, team leadership, and Agile experience."
+BAD example (scripted, polished, JD-keyword matching):
+"Although I haven't worked directly in banking, the fundamentals of testing remain quite consistent. I'm confident that my strong foundation in automation, SQL and backend validation, Agile collaboration, and team leadership will allow me to contribute effectively and ramp up quickly in a banking environment. I'm also fully open to learning new tools and processes specific to your environment, whether that's Playwright, Litmus, or Micro Focus Octane."
 
-GOOD example (natural speech, grouped thoughts):
-I have over 13 years of experience in software testing, and over the last several years I've been working extensively on test automation, mainly using Selenium WebDriver with Java.
+GOOD example (natural, honest, plain-spoken):
+I have over 13 years of experience in software testing, and automation has been a major part of my work. I've mainly used Selenium WebDriver for UI automation and REST Assured for API testing, along with SQL for backend and data validation.
 
-In my recent projects, I've been responsible not only for developing automation scripts but also for maintaining the framework and making sure the tests are stable and reusable. For example, I use reusable page components, proper synchronization and waits, and common utilities so that we don't end up with a lot of flaky tests.
+In my recent roles, I've been involved in the complete testing cycle — from understanding requirements and preparing the test approach to execution, defect tracking, regression testing, and release validation. I've also worked with Jenkins and Azure DevOps to integrate automation into CI/CD pipelines so that we can catch issues earlier in the development cycle.
 
-From a Test Lead perspective, my role goes beyond automation. I've worked on test planning, reviewing coverage, coordinating testing activities within the sprint, tracking defects, and mentoring other QA team members.
+Over the last few years, I've also taken on more of a leadership role. I've coordinated testing activities within Agile sprints, reviewed test cases and automation scripts, helped prioritize testing based on risk, and supported junior team members whenever they had technical or functional issues.
 
-Most of my recent domain experience has been in healthcare and e-commerce, but the QA processes are very similar. So I believe that combination of hands-on experience along with QA leadership fits well with this role.
+Most of my domain experience has been in healthcare and e-commerce. I haven't worked extensively in banking, so there would definitely be some domain knowledge for me to pick up, but I'm very comfortable working with complex business workflows, backend validation, and data-intensive applications.
+
+So I see this Test Lead role as a good fit because I can bring both hands-on automation experience and the ability to coordinate and guide a QA team, while also learning the specific tools and banking processes used here.
 
 Rules:
 1. Start with a direct, natural answer to the question.
@@ -356,12 +358,15 @@ Rules:
 
 CRITICAL OUTPUT FORMAT — NATURAL SPOKEN ANSWER:
 Write every answer section as SHORT PARAGRAPHS (2-4 sentences each), not single-line bullets. Each paragraph is one coherent thought the person would say together. This is how people actually speak.
-- Use natural transitions: "In my recent projects...", "For example...", "From a leadership perspective..."
+- Use natural transitions: "In my recent roles...", "Over the last few years...", "For example...", "Most of my experience has been in..."
 - Do NOT map each paragraph to one JD keyword.
 - Do NOT cram tools and buzzwords into every sentence.
-- Do NOT use jargon like "leveraging", "streamlining", "spearheading". Use plain language.
-- Do NOT end with a neat summary that packages all skills. Just stop naturally.
-- Sound like a real person, not a keyword-stuffed bot.
+- Do NOT use jargon like "leveraging", "streamlining", "spearheading", "contribute effectively", "ramp up quickly". Use plain language.
+- Do NOT end with a polished summary that neatly packages all skills. Just close naturally.
+- Do NOT name-drop tools from the JD that the candidate hasn't actually used.
+- Do NOT use filler phrases that sound impressive but say nothing. Be specific or skip it.
+- Be HONEST about gaps — say them plainly, don't polish them into strengths.
+- Sound like a real person, not a keyword-stuffed bot or a rehearsed pitch.
 
 Return in this format:
 # Detected Question
